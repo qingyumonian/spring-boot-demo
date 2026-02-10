@@ -1,13 +1,13 @@
-package com.lxf.demo.service.impl;
+package com.lxf.demo.modules.user.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.lxf.demo.entity.User;
-import com.lxf.demo.mapper.UserMapper;
-import com.lxf.demo.security.Md5PasswordEncoder;
-import com.lxf.demo.service.IUserService;
+import com.lxf.demo.modules.user.entity.User;
+import com.lxf.demo.modules.user.mapper.UserMapper;
+import com.lxf.demo.modules.user.service.IUserService;
+import com.lxf.demo.security.encoder.Md5PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

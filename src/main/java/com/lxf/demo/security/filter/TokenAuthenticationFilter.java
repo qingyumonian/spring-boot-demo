@@ -1,6 +1,7 @@
-package com.lxf.demo.security;
+package com.lxf.demo.security.filter;
 
-import com.lxf.demo.service.TokenService;
+import com.lxf.demo.modules.auth.service.TokenService;
+import com.lxf.demo.security.userdetails.CustomUserDetails;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;

@@ -1,7 +1,7 @@
-package com.lxf.demo.service;
+package com.lxf.demo.modules.user.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.lxf.demo.entity.User;
+import com.lxf.demo.modules.user.entity.User;
 
 import java.util.List;
 

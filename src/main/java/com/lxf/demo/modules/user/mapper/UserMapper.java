@@ -1,7 +1,7 @@
-package com.lxf.demo.mapper;
+package com.lxf.demo.modules.user.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.lxf.demo.entity.User;
+import com.lxf.demo.modules.user.entity.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 

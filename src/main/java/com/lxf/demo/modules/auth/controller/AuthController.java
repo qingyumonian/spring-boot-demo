@@ -1,10 +1,10 @@
-package com.lxf.demo.controller;
+package com.lxf.demo.modules.auth.controller;
 
-import com.lxf.demo.dto.LoginRequest;
-import com.lxf.demo.dto.LoginResponse;
-import com.lxf.demo.security.CustomUserDetails;
-import com.lxf.demo.service.IUserService;
-import com.lxf.demo.service.TokenService;
+import com.lxf.demo.modules.auth.dto.LoginRequest;
+import com.lxf.demo.modules.auth.dto.LoginResponse;
+import com.lxf.demo.modules.auth.service.TokenService;
+import com.lxf.demo.modules.user.service.IUserService;
+import com.lxf.demo.security.userdetails.CustomUserDetails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;

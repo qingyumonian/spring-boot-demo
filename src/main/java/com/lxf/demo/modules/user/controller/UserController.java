@@ -1,15 +1,13 @@
-package com.lxf.demo.controller;
+package com.lxf.demo.modules.user.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.lxf.demo.entity.User;
-import com.lxf.demo.service.IUserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.lxf.demo.modules.user.entity.User;
+import com.lxf.demo.modules.user.service.IUserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")

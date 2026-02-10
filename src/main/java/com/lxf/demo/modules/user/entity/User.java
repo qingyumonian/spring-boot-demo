@@ -1,4 +1,4 @@
-package com.lxf.demo.entity;
+package com.lxf.demo.modules.user.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;

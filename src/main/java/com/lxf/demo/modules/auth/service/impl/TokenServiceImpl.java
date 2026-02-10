@@ -1,10 +1,10 @@
-package com.lxf.demo.service.impl;
+package com.lxf.demo.modules.auth.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.lxf.demo.entity.User;
-import com.lxf.demo.security.CustomUserDetails;
-import com.lxf.demo.security.TokenProvider;
-import com.lxf.demo.service.TokenService;
+import com.lxf.demo.modules.auth.service.TokenProvider;
+import com.lxf.demo.modules.auth.service.TokenService;
+import com.lxf.demo.modules.user.entity.User;
+import com.lxf.demo.security.userdetails.CustomUserDetails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;

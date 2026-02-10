@@ -1,6 +1,6 @@
-package com.lxf.demo.service;
+package com.lxf.demo.modules.auth.service;
 
-import com.lxf.demo.security.CustomUserDetails;
+import com.lxf.demo.security.userdetails.CustomUserDetails;
 
 public interface TokenService {
 

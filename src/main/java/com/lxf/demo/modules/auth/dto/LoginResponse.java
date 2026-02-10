@@ -1,4 +1,4 @@
-package com.lxf.demo.dto;
+package com.lxf.demo.modules.auth.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

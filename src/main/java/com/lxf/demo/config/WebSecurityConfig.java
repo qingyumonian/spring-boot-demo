@@ -1,8 +1,7 @@
 package com.lxf.demo.config;
 
-import com.lxf.demo.security.CustomAuthenticationProvider;
-import com.lxf.demo.security.CustomUserDetailsService;
-import com.lxf.demo.security.TokenAuthenticationFilter;
+import com.lxf.demo.security.provider.CustomAuthenticationProvider;
+import com.lxf.demo.security.filter.TokenAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,9 +21,6 @@ import javax.annotation.Resource;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-
-    @Resource
-    private CustomUserDetailsService customUserDetailsService;
 
     @Resource
     private TokenAuthenticationFilter tokenAuthenticationFilter;

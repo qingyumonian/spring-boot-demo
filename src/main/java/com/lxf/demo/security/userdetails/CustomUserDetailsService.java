@@ -1,7 +1,7 @@
-package com.lxf.demo.security;
+package com.lxf.demo.security.userdetails;
 
-import com.lxf.demo.entity.User;
-import com.lxf.demo.service.IUserService;
+import com.lxf.demo.modules.user.entity.User;
+import com.lxf.demo.modules.user.service.IUserService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

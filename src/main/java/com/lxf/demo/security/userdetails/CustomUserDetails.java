@@ -1,6 +1,6 @@
-package com.lxf.demo.security;
+package com.lxf.demo.security.userdetails;
 
-import com.lxf.demo.entity.User;
+import com.lxf.demo.modules.user.entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

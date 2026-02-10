@@ -1,4 +1,4 @@
-package com.lxf.demo.security;
+package com.lxf.demo.security.encoder;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;

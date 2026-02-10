@@ -1,4 +1,4 @@
-package com.lxf.demo.security;
+package com.lxf.demo.modules.auth.service;
 
 import org.springframework.stereotype.Component;
 

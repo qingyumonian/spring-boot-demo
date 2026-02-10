@@ -1,7 +1,9 @@
-package com.lxf.demo.security;
+package com.lxf.demo.security.provider;
 
-import com.lxf.demo.entity.User;
-import com.lxf.demo.service.IUserService;
+import com.lxf.demo.modules.user.entity.User;
+import com.lxf.demo.modules.user.service.IUserService;
+import com.lxf.demo.security.encoder.Md5PasswordEncoder;
+import com.lxf.demo.security.userdetails.CustomUserDetails;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
