@@ -8,6 +8,9 @@ CREATE TABLE `user` (
   `email` VARCHAR(100) NOT NULL UNIQUE COMMENT 'Email',
   `age` INT COMMENT 'Age',
   `password` VARCHAR(255) COMMENT 'Password',
+  `status` TINYINT DEFAULT 1 COMMENT 'Status: 0-disabled, 1-enabled',
+  `role` VARCHAR(50) DEFAULT 'USER' COMMENT 'Role: USER, ADMIN',
+  `last_login_time` DATETIME COMMENT 'Last login time',
   `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'Created time',
   `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Updated time',
   PRIMARY KEY (`id`)
@@ -23,6 +26,9 @@ CREATE TABLE `user` (
   `email` VARCHAR(100) NOT NULL UNIQUE COMMENT 'Email',
   `age` INT COMMENT 'Age',
   `password` VARCHAR(255) COMMENT 'Password',
+  `status` TINYINT DEFAULT 1 COMMENT 'Status: 0-disabled, 1-enabled',
+  `role` VARCHAR(50) DEFAULT 'USER' COMMENT 'Role: USER, ADMIN',
+  `last_login_time` DATETIME COMMENT 'Last login time',
   `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'Created time',
   `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Updated time',
   PRIMARY KEY (`id`)
@@ -38,7 +44,15 @@ CREATE TABLE `user` (
   `email` VARCHAR(100) NOT NULL UNIQUE COMMENT 'Email',
   `age` INT COMMENT 'Age',
   `password` VARCHAR(255) COMMENT 'Password',
+  `status` TINYINT DEFAULT 1 COMMENT 'Status: 0-disabled, 1-enabled',
+  `role` VARCHAR(50) DEFAULT 'USER' COMMENT 'Role: USER, ADMIN',
+  `last_login_time` DATETIME COMMENT 'Last login time',
   `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'Created time',
   `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Updated time',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ALTER statements for existing tables (run these if tables already exist)
+-- ALTER TABLE `user` ADD COLUMN `status` TINYINT DEFAULT 1 COMMENT 'Status: 0-disabled, 1-enabled';
+-- ALTER TABLE `user` ADD COLUMN `role` VARCHAR(50) DEFAULT 'USER' COMMENT 'Role: USER, ADMIN';
+-- ALTER TABLE `user` ADD COLUMN `last_login_time` DATETIME COMMENT 'Last login time';

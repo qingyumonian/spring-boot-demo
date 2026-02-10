@@ -22,6 +22,12 @@ public class User {
 
     private String password;
 
+    private Integer status;
+
+    private String role;
+
+    private LocalDateTime lastLoginTime;
+
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;

@@ -18,4 +18,8 @@ public interface IUserService {
     List<User> getAllUsers();
 
     IPage<User> getUserPage(int pageNum, int pageSize);
+
+    User findByUsername(String username);
+
+    void updateLastLoginTime(Long userId);
 }
