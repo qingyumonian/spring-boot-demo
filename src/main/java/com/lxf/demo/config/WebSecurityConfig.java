@@ -16,6 +16,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 
 import javax.annotation.Resource;
 
@@ -51,19 +52,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable()
+        http
+                .cors().and()
+                .csrf().disable()
                 .httpBasic().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/api/login", "/api/logout").permitAll()
+                .antMatchers( "/api/logout","/api/auth/**").permitAll()
                 .anyRequest().authenticated()
-                .and().formLogin()
+                .and().formLogin().loginProcessingUrl("/api/auth/form")
                 .successHandler(formAuthSuccessHandler).failureHandler(formAuthFailHandler)
                 .and()
-                .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(tokenAuthenticationFilter, SecurityContextPersistenceFilter.class);
 
-
+        http.headers().frameOptions().disable();
     }
 
     @Override

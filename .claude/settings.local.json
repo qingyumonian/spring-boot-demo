@@ -1,0 +1,27 @@
+{
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(git config:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git init:*)",
+      "Bash(git remote add:*)",
+      "Bash(git branch:*)",
+      "Bash(mvnw.cmd clean compile:*)",
+      "Bash(cmd.exe /c \"mvnw.cmd clean compile -q\")",
+      "Bash(cmd.exe /c \".\\\\mvnw.cmd clean compile -q\")",
+      "Bash(cmd.exe:*)",
+      "Bash(dir:*)",
+      "Bash(npm *)",
+      "Bash(./mvnw clean:*)",
+      "Bash(timeout:*)",
+      "Bash(findstr:*)",
+      "Bash(\"D:\\\\code\\\\interview\\\\SpringBootDemo\\\\mvnw.cmd\" -f \"D:\\\\code\\\\interview\\\\SpringBootDemo\\\\pom.xml\" clean compile)",
+      "Bash(\"D:\\\\code\\\\interview\\\\SpringBootDemo\\\\mvnw.cmd\" -f \"D:\\\\code\\\\interview\\\\SpringBootDemo\\\\pom.xml\" compile)"
+    ]
+  }
+}

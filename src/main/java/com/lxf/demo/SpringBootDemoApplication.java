@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@MapperScan("com.lxf.demo.modules.*.mapper")
+@MapperScan("com.lxf.demo.modules.mapper")
 public class SpringBootDemoApplication {
 
     public static void main(String[] args) {

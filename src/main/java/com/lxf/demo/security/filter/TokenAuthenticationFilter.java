@@ -1,6 +1,7 @@
 package com.lxf.demo.security.filter;
 
-import com.lxf.demo.modules.auth.service.TokenService;
+import com.lxf.demo.modules.service.IRoleService;
+import com.lxf.demo.security.EzAuthenticationToken;
 import com.lxf.demo.security.userdetails.CustomUserDetails;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,7 +23,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     private static final String TOKEN_HEADER = "am_access_token";
 
     @Resource
-    private TokenService tokenService;
+    private IRoleService.TokenService tokenService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
@@ -34,20 +35,13 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                 CustomUserDetails userDetails = tokenService.getUserByToken(token);
 
                 if (userDetails != null) {
-                    UsernamePasswordAuthenticationToken authentication =
-                            new UsernamePasswordAuthenticationToken(
-                                    userDetails,
-                                    null,
-                                    userDetails.getAuthorities()
-                            );
-
+                    EzAuthenticationToken authentication = new EzAuthenticationToken(userDetails, token);
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
             }
         } catch (Exception e) {
             logger.error("Cannot set user authentication", e);
         }
-
         filterChain.doFilter(request, response);
     }
 

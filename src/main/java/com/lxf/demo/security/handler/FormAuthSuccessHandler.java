@@ -2,8 +2,8 @@ package com.lxf.demo.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lxf.demo.common.result.R;
-import com.lxf.demo.modules.auth.dto.LoginResponse;
-import com.lxf.demo.modules.auth.service.TokenService;
+import com.lxf.demo.modules.dto.LoginResponse;
+import com.lxf.demo.modules.service.IRoleService;
 import com.lxf.demo.security.userdetails.CustomUserDetails;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,7 +28,7 @@ import java.io.IOException;
 public class FormAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     @Resource
-    private TokenService tokenService;
+    private IRoleService.TokenService tokenService;
 
     @Resource
     private ObjectMapper objectMapper;
