@@ -1,5 +1,7 @@
 package com.lxf.demo.config;
 
+import com.lxf.demo.security.handler.FormAuthFailHandler;
+import com.lxf.demo.security.handler.FormAuthSuccessHandler;
 import com.lxf.demo.security.provider.CustomAuthenticationProvider;
 import com.lxf.demo.security.filter.TokenAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
@@ -28,6 +30,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Resource
     private CustomAuthenticationProvider customAuthenticationProvider;
 
+    @Resource
+    private FormAuthSuccessHandler formAuthSuccessHandler;
+
+    @Resource
+    private FormAuthFailHandler formAuthFailHandler;
+
+
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
@@ -48,11 +57,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/api/login", "/api/logout").permitAll()
-                .antMatchers("/api/users/**").permitAll()
                 .anyRequest().authenticated()
                 .and().formLogin()
+                .successHandler(formAuthSuccessHandler).failureHandler(formAuthFailHandler)
                 .and()
                 .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+
     }
 
     @Override

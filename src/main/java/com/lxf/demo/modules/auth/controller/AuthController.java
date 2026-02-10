@@ -25,7 +25,7 @@ import java.util.Map;
 @RequestMapping("/api")
 public class AuthController {
 
-    private static final String TOKEN_HEADER = "ec_access_token";
+    private static final String TOKEN_HEADER = "am_access_token";
 
     @Resource
     private AuthenticationManager authenticationManager;

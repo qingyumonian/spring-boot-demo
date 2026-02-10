@@ -19,7 +19,7 @@ import java.io.IOException;
 @Component
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
-    private static final String TOKEN_HEADER = "ec_access_token";
+    private static final String TOKEN_HEADER = "am_access_token";
 
     @Resource
     private TokenService tokenService;
