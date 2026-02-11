@@ -73,7 +73,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling()
                     .authenticationEntryPoint(jsonAuthenticationEntryPoint)
                 .and()
-                .addFilterBefore(tokenAuthenticationFilter, SecurityContextPersistenceFilter.class);
+                .addFilterAfter(tokenAuthenticationFilter, SecurityContextPersistenceFilter.class);  //在管理SecurityContext之后获取token 信息并放入全局中
 
         http.headers().frameOptions().disable();
     }
