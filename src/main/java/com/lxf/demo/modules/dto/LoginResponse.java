@@ -1,7 +1,7 @@
 package com.lxf.demo.modules.dto;
 
-import com.lxf.demo.modules.entity.Menu;
-import com.lxf.demo.modules.entity.Role;
+import com.lxf.demo.modules.entity.SysMenu;
+import com.lxf.demo.modules.entity.SysRole;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,7 +18,7 @@ public class LoginResponse {
     private String username;
     private String role;
     private Long expiresIn;
-    private List<Role> roles;
-    private List<Menu> menus;
+    private List<SysRole> roles;
+    private List<SysMenu> menus;
     private List<String> permissions;
 }

@@ -50,7 +50,7 @@ public class FormAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandle
         LoginResponse loginResponse = LoginResponse.builder()
                 .token(token)
                 .username(userDetails.getUsername())
-                .role(userDetails.getRole())
+//                .role(userDetails.getRole())
                 .expiresIn(tokenTimeout)
                 .build();
 

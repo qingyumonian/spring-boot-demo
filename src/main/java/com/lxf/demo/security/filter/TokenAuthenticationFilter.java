@@ -2,8 +2,12 @@ package com.lxf.demo.security.filter;
 
 import com.lxf.demo.modules.service.IRoleService;
 import com.lxf.demo.security.EzAuthenticationToken;
+import com.lxf.demo.security.handler.FormAuthFailHandler;
 import com.lxf.demo.security.userdetails.CustomUserDetails;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -17,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+@Slf4j
 @Component
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
@@ -24,6 +29,8 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     @Resource
     private IRoleService.TokenService tokenService;
+    @Resource
+    private FormAuthFailHandler authenticationFailureHandler;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
@@ -33,14 +40,21 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
             if (StringUtils.hasText(token) && tokenService.validateToken(token)) {
                 CustomUserDetails userDetails = tokenService.getUserByToken(token);
-
+                EzAuthenticationToken authentication = null;
                 if (userDetails != null) {
-                    EzAuthenticationToken authentication = new EzAuthenticationToken(userDetails, token);
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                     authentication = new EzAuthenticationToken(userDetails, token);
+                    SecurityContext context = SecurityContextHolder.createEmptyContext();
+                    context.setAuthentication(authentication);
+                    SecurityContextHolder.setContext(context);
+//                    SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
+                System.out.println("Is user authenticated? " + authentication.isAuthenticated());
             }
+        } catch (AuthenticationException failed) {
+            SecurityContextHolder.clearContext();
+            this.authenticationFailureHandler.onAuthenticationFailure(request, response, failed);
         } catch (Exception e) {
-            logger.error("Cannot set user authentication", e);
+            log.error("Cannot set user authentication", e);
         }
         filterChain.doFilter(request, response);
     }

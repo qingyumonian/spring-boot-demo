@@ -8,8 +8,8 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-@TableName("user")
-public class User {
+@TableName("sys_user")
+public class SysUser {
 
     @TableId(type = IdType.AUTO)
     private Long id;

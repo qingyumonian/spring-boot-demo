@@ -3,8 +3,8 @@ package com.lxf.demo.modules.controller;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.lxf.demo.modules.dto.RoleCreateRequest;
 import com.lxf.demo.modules.dto.RoleUpdateRequest;
-import com.lxf.demo.modules.entity.Role;
-import com.lxf.demo.modules.entity.Menu;
+import com.lxf.demo.modules.entity.SysRole;
+import com.lxf.demo.modules.entity.SysMenu;
 import com.lxf.demo.modules.service.IMenuService;
 import com.lxf.demo.modules.service.IRoleService;
 import org.springframework.http.HttpStatus;
@@ -25,19 +25,19 @@ public class RoleController {
     private IMenuService menuService;
 
     @PostMapping
-    public ResponseEntity<Role> createRole(@RequestBody RoleCreateRequest request) {
-        Role role = new Role();
+    public ResponseEntity<SysRole> createRole(@RequestBody RoleCreateRequest request) {
+        SysRole role = new SysRole();
         role.setRoleName(request.getRoleName());
         role.setRoleKey(request.getRoleKey());
         role.setDescription(request.getDescription());
         role.setSortOrder(request.getSortOrder());
-        Role savedRole = roleService.saveRole(role);
+        SysRole savedRole = roleService.saveRole(role);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedRole);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Role> getRoleById(@PathVariable Long id) {
-        Role role = roleService.getRoleById(id);
+    public ResponseEntity<SysRole> getRoleById(@PathVariable Long id) {
+        SysRole role = roleService.getRoleById(id);
         if (role != null) {
             return ResponseEntity.ok(role);
         } else {
@@ -46,8 +46,8 @@ public class RoleController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Role> updateRole(@PathVariable Long id, @RequestBody RoleUpdateRequest request) {
-        Role role = roleService.getRoleById(id);
+    public ResponseEntity<SysRole> updateRole(@PathVariable Long id, @RequestBody RoleUpdateRequest request) {
+        SysRole role = roleService.getRoleById(id);
         if (role == null) {
             return ResponseEntity.notFound().build();
         }
@@ -55,7 +55,7 @@ public class RoleController {
         role.setRoleKey(request.getRoleKey());
         role.setDescription(request.getDescription());
         role.setSortOrder(request.getSortOrder());
-        Role updatedRole = roleService.updateRole(role);
+        SysRole updatedRole = roleService.updateRole(role);
         return ResponseEntity.ok(updatedRole);
     }
 
@@ -70,16 +70,16 @@ public class RoleController {
     }
 
     @GetMapping
-    public ResponseEntity<IPage<Role>> getAllRoles(
+    public ResponseEntity<IPage<SysRole>> getAllRoles(
             @RequestParam(defaultValue = "1") int pageNum,
             @RequestParam(defaultValue = "10") int pageSize) {
-        IPage<Role> rolePage = roleService.getRolePage(pageNum, pageSize);
+        IPage<SysRole> rolePage = roleService.getRolePage(pageNum, pageSize);
         return ResponseEntity.ok(rolePage);
     }
 
     @PutMapping("/{id}/menus")
     public ResponseEntity<Void> assignMenus(@PathVariable Long id, @RequestBody List<Long> menuIds) {
-        Role role = roleService.getRoleById(id);
+        SysRole role = roleService.getRoleById(id);
         if (role == null) {
             return ResponseEntity.notFound().build();
         }
@@ -88,12 +88,12 @@ public class RoleController {
     }
 
     @GetMapping("/{id}/menus")
-    public ResponseEntity<List<Menu>> getRoleMenus(@PathVariable Long id) {
-        Role role = roleService.getRoleById(id);
+    public ResponseEntity<List<SysMenu>> getRoleMenus(@PathVariable Long id) {
+        SysRole role = roleService.getRoleById(id);
         if (role == null) {
             return ResponseEntity.notFound().build();
         }
-        List<Menu> menus = menuService.getMenusByRoleId(id);
+        List<SysMenu> menus = menuService.getMenusByRoleId(id);
         return ResponseEntity.ok(menus);
     }
 }

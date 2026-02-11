@@ -1,28 +1,28 @@
 package com.lxf.demo.modules.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.lxf.demo.modules.entity.Role;
+import com.lxf.demo.modules.entity.SysRole;
 import com.lxf.demo.security.userdetails.CustomUserDetails;
 
 import java.util.List;
 
 public interface IRoleService {
 
-    Role saveRole(Role role);
+    SysRole saveRole(SysRole role);
 
-    Role getRoleById(Long id);
+    SysRole getRoleById(Long id);
 
-    Role updateRole(Role role);
+    SysRole updateRole(SysRole role);
 
     boolean deleteRole(Long id);
 
-    List<Role> getAllRoles();
+    List<SysRole> getAllRoles();
 
-    IPage<Role> getRolePage(int pageNum, int pageSize);
+    IPage<SysRole> getRolePage(int pageNum, int pageSize);
 
-    Role findByRoleKey(String roleKey);
+    SysRole findByRoleKey(String roleKey);
 
-    List<Role> getRolesByUserId(Long userId);
+    List<SysRole> getRolesByUserId(Long userId);
 
     interface TokenService {
 

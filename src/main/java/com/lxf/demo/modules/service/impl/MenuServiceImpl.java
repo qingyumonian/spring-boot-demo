@@ -3,7 +3,7 @@ package com.lxf.demo.modules.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.lxf.demo.modules.entity.Menu;
+import com.lxf.demo.modules.entity.SysMenu;
 import com.lxf.demo.modules.mapper.MenuMapper;
 import com.lxf.demo.modules.mapper.RoleMenuMapper;
 import com.lxf.demo.modules.service.IMenuService;
@@ -24,7 +24,7 @@ public class MenuServiceImpl implements IMenuService {
     private RoleMenuMapper roleMenuMapper;
 
     @Override
-    public Menu saveMenu(Menu menu) {
+    public SysMenu saveMenu(SysMenu menu) {
         if (menu.getParentId() == null) {
             menu.setParentId(0L);
         }
@@ -42,12 +42,12 @@ public class MenuServiceImpl implements IMenuService {
     }
 
     @Override
-    public Menu getMenuById(Long id) {
+    public SysMenu getMenuById(Long id) {
         return menuMapper.selectById(id);
     }
 
     @Override
-    public Menu updateMenu(Menu menu) {
+    public SysMenu updateMenu(SysMenu menu) {
         menuMapper.updateById(menu);
         return menu;
     }
@@ -58,28 +58,28 @@ public class MenuServiceImpl implements IMenuService {
     }
 
     @Override
-    public List<Menu> getAllMenus() {
-        LambdaQueryWrapper<Menu> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.orderByAsc(Menu::getSortOrder);
+    public List<SysMenu> getAllMenus() {
+        LambdaQueryWrapper<SysMenu> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.orderByAsc(SysMenu::getSortOrder);
         return menuMapper.selectList(queryWrapper);
     }
 
     @Override
-    public IPage<Menu> getMenuPage(int pageNum, int pageSize) {
-        Page<Menu> page = new Page<>(pageNum, pageSize);
-        LambdaQueryWrapper<Menu> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.orderByAsc(Menu::getSortOrder);
+    public IPage<SysMenu> getMenuPage(int pageNum, int pageSize) {
+        Page<SysMenu> page = new Page<>(pageNum, pageSize);
+        LambdaQueryWrapper<SysMenu> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.orderByAsc(SysMenu::getSortOrder);
         return menuMapper.selectPage(page, queryWrapper);
     }
 
     @Override
-    public List<Menu> getMenuTree() {
-        List<Menu> allMenus = getAllMenus();
+    public List<SysMenu> getMenuTree() {
+        List<SysMenu> allMenus = getAllMenus();
         return buildTree(allMenus, 0L);
     }
 
     @Override
-    public List<Menu> getMenusByRoleId(Long roleId) {
+    public List<SysMenu> getMenusByRoleId(Long roleId) {
         List<Long> menuIds = roleMenuMapper.selectMenuIdsByRoleId(roleId);
         if (menuIds == null || menuIds.isEmpty()) {
             return Collections.emptyList();
@@ -88,7 +88,7 @@ public class MenuServiceImpl implements IMenuService {
     }
 
     @Override
-    public List<Menu> getMenuTreeByRoleIds(List<Long> roleIds) {
+    public List<SysMenu> getMenuTreeByRoleIds(List<Long> roleIds) {
         if (roleIds == null || roleIds.isEmpty()) {
             return Collections.emptyList();
         }
@@ -106,30 +106,30 @@ public class MenuServiceImpl implements IMenuService {
         }
 
         List<Long> distinctMenuIds = allMenuIds.stream().distinct().collect(Collectors.toList());
-        List<Menu> menus = menuMapper.selectBatchIds(distinctMenuIds);
+        List<SysMenu> menus = menuMapper.selectBatchIds(distinctMenuIds);
 
-        LambdaQueryWrapper<Menu> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.in(Menu::getId, distinctMenuIds)
-                   .orderByAsc(Menu::getSortOrder);
+        LambdaQueryWrapper<SysMenu> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(SysMenu::getId, distinctMenuIds)
+                   .orderByAsc(SysMenu::getSortOrder);
         menus = menuMapper.selectList(queryWrapper);
 
         return buildTree(menus, 0L);
     }
 
-    private List<Menu> buildTree(List<Menu> menus, Long parentId) {
-        Map<Long, List<Menu>> menusByParentId = menus.stream()
-                .collect(Collectors.groupingBy(Menu::getParentId));
+    private List<SysMenu> buildTree(List<SysMenu> menus, Long parentId) {
+        Map<Long, List<SysMenu>> menusByParentId = menus.stream()
+                .collect(Collectors.groupingBy(SysMenu::getParentId));
 
         return buildTreeRecursive(menusByParentId, parentId);
     }
 
-    private List<Menu> buildTreeRecursive(Map<Long, List<Menu>> menusByParentId, Long parentId) {
-        List<Menu> children = menusByParentId.get(parentId);
+    private List<SysMenu> buildTreeRecursive(Map<Long, List<SysMenu>> menusByParentId, Long parentId) {
+        List<SysMenu> children = menusByParentId.get(parentId);
         if (children == null) {
             return new ArrayList<>();
         }
 
-        for (Menu menu : children) {
+        for (SysMenu menu : children) {
             menu.setChildren(buildTreeRecursive(menusByParentId, menu.getId()));
         }
 

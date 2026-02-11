@@ -1,27 +1,27 @@
 package com.lxf.demo.modules.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.lxf.demo.modules.entity.Menu;
+import com.lxf.demo.modules.entity.SysMenu;
 
 import java.util.List;
 
 public interface IMenuService {
 
-    Menu saveMenu(Menu menu);
+    SysMenu saveMenu(SysMenu menu);
 
-    Menu getMenuById(Long id);
+    SysMenu getMenuById(Long id);
 
-    Menu updateMenu(Menu menu);
+    SysMenu updateMenu(SysMenu menu);
 
     boolean deleteMenu(Long id);
 
-    List<Menu> getAllMenus();
+    List<SysMenu> getAllMenus();
 
-    IPage<Menu> getMenuPage(int pageNum, int pageSize);
+    IPage<SysMenu> getMenuPage(int pageNum, int pageSize);
 
-    List<Menu> getMenuTree();
+    List<SysMenu> getMenuTree();
 
-    List<Menu> getMenusByRoleId(Long roleId);
+    List<SysMenu> getMenusByRoleId(Long roleId);
 
-    List<Menu> getMenuTreeByRoleIds(List<Long> roleIds);
+    List<SysMenu> getMenuTreeByRoleIds(List<Long> roleIds);
 }

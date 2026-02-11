@@ -5,12 +5,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
 public class RedisConfig {
 
-    @Bean
+    //    @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
@@ -26,4 +27,21 @@ public class RedisConfig {
         template.afterPropertiesSet();
         return template;
     }
+//    @Bean
+//    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+//        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+//        redisTemplate.setConnectionFactory(redisConnectionFactory);
+//
+//        // key采用 String的序列化方式
+//        redisTemplate.setKeySerializer(ecStringRedisSerializer());
+//        // hash的 key也采用 String的序列化方式
+//        redisTemplate.setHashKeySerializer(ecStringRedisSerializer());
+//        // value序列化方式采用 jdk
+//        redisTemplate.setValueSerializer(new JdkSerializationRedisSerializer());
+//        // hash的 value序列化方式采用 jdk
+//        redisTemplate.setHashValueSerializer(new JdkSerializationRedisSerializer());
+//        redisTemplate.afterPropertiesSet();
+//
+//        return redisTemplate;
+//    }
 }

@@ -16,26 +16,30 @@ import java.util.Collection;
 public class EzAuthenticationToken extends AbstractAuthenticationToken {
 
     @Getter
-    private String accessToekn;
-
-    @Getter
     @Setter
     private CustomUserDetails userDetails;
 
-    public EzAuthenticationToken(CustomUserDetails userDetails, String accessToekn) {
+    @Getter
+    private final String accessToken;
+
+
+
+    public EzAuthenticationToken(CustomUserDetails userDetails, String accessToken) {
         super(userDetails.getAuthorities());
         this.userDetails = userDetails;
-        this.accessToekn = accessToekn;
+        this.accessToken = accessToken;
         setAuthenticated(true);
     }
 
     @Override
     public Object getCredentials() {
-        return null;
+        return accessToken;
     }
 
     @Override
     public Object getPrincipal() {
-        return null;
+
+
+        return userDetails;
     }
 }

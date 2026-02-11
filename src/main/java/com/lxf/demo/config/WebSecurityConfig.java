@@ -1,8 +1,9 @@
 package com.lxf.demo.config;
 
+import com.lxf.demo.security.encoder.Md5PasswordEncoder;
 import com.lxf.demo.security.handler.FormAuthFailHandler;
 import com.lxf.demo.security.handler.FormAuthSuccessHandler;
-import com.lxf.demo.security.provider.CustomAuthenticationProvider;
+import com.lxf.demo.security.handler.JsonAuthenticationEntryPoint;
 import com.lxf.demo.security.filter.TokenAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +15,7 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 
@@ -29,14 +30,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private TokenAuthenticationFilter tokenAuthenticationFilter;
 
     @Resource
-    private CustomAuthenticationProvider customAuthenticationProvider;
-
-    @Resource
     private FormAuthSuccessHandler formAuthSuccessHandler;
 
     @Resource
     private FormAuthFailHandler formAuthFailHandler;
 
+    @Resource
+    private JsonAuthenticationEntryPoint jsonAuthenticationEntryPoint;
+
+    @Resource
+    private UserDetailsService userDetailsService;
+
+    @Resource
+    private Md5PasswordEncoder md5PasswordEncoder;
 
     @Bean
     @Override
@@ -46,8 +52,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        // 使用自定义认证提供者
-        auth.authenticationProvider(customAuthenticationProvider);
+        // 使用默认认证机制
+        auth.userDetailsService(userDetailsService).passwordEncoder(md5PasswordEncoder);
     }
 
     @Override
@@ -59,10 +65,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers( "/api/logout","/api/auth/**").permitAll()
+                .antMatchers( "/api/auth/logout","/api/auth/**").permitAll()
                 .anyRequest().authenticated()
                 .and().formLogin().loginProcessingUrl("/api/auth/form")
                 .successHandler(formAuthSuccessHandler).failureHandler(formAuthFailHandler)
+                .and()
+                .exceptionHandling()
+                    .authenticationEntryPoint(jsonAuthenticationEntryPoint)
                 .and()
                 .addFilterBefore(tokenAuthenticationFilter, SecurityContextPersistenceFilter.class);
 
@@ -72,7 +81,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) {
         web.ignoring()
-                .antMatchers("/static/**", "/favicon.ico")
+                .antMatchers("/static/**", "/favicon.ico","/login.html")
                 .antMatchers("/swagger-ui.html", "/swagger-resources/**", "/v2/api-docs", "/webjars/**");
     }
 }

@@ -4,15 +4,14 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.lxf.demo.modules.dto.UserCreateRequest;
 import com.lxf.demo.modules.dto.UserRoleAssignRequest;
 import com.lxf.demo.modules.dto.UserUpdateRequest;
-import com.lxf.demo.modules.entity.User;
+import com.lxf.demo.modules.entity.*;
 import com.lxf.demo.modules.service.IMenuService;
 import com.lxf.demo.modules.service.IRoleService;
-import com.lxf.demo.modules.entity.Role;
-import com.lxf.demo.modules.entity.Menu;
 import com.lxf.demo.modules.service.IUserService;
 import com.lxf.demo.security.userdetails.CustomUserDetails;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -49,17 +48,17 @@ public class UserController {
         }
 
         CustomUserDetails userDetails = (CustomUserDetails) principal;
-        User user = userService.getUserById(userDetails.getUserId());
+        SysUser user = userService.getUserById(userDetails.getId());
         if (user == null) {
             return ResponseEntity.notFound().build();
         }
 
         List<Long> roleIds = userService.getUserRoleIds(user.getId());
-        List<Role> roles = roleService.getRolesByUserId(user.getId());
-        List<Menu> menus = menuService.getMenuTreeByRoleIds(roleIds);
+        List<SysRole> roles = roleService.getRolesByUserId(user.getId());
+        List<SysMenu> menus = menuService.getMenuTreeByRoleIds(roleIds);
         List<String> permissions = menus.stream()
                 .filter(m -> m.getPermission() != null && !m.getPermission().isEmpty())
-                .map(Menu::getPermission)
+                .map(SysMenu::getPermission)
                 .collect(Collectors.toList());
 
         Map<String, Object> userInfo = new HashMap<>();
@@ -72,20 +71,22 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody UserCreateRequest request) {
-        User user = new User();
+    @PreAuthorize("hasAuthority('system:user:add')")
+    public ResponseEntity<SysUser> createUser(@RequestBody UserCreateRequest request) {
+        SysUser user = new SysUser();
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
         user.setAge(request.getAge());
         user.setPassword(request.getPassword());
         user.setStatus(1); // 默认启用状态
-        User savedUser = userService.saveUser(user);
+        SysUser savedUser = userService.saveUser(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        User user = userService.getUserById(id);
+    @PreAuthorize("hasAuthority('system:user:query')")
+    public ResponseEntity<SysUser> getUserById(@PathVariable Long id) {
+        SysUser user = userService.getUserById(id);
         if (user != null) {
             return ResponseEntity.ok(user);
         } else {
@@ -94,8 +95,9 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody UserUpdateRequest request) {
-        User user = userService.getUserById(id);
+    @PreAuthorize("hasAuthority('system:user:edit')")
+    public ResponseEntity<SysUser> updateUser(@PathVariable Long id, @RequestBody UserUpdateRequest request) {
+        SysUser user = userService.getUserById(id);
         if (user == null) {
             return ResponseEntity.notFound().build();
         }
@@ -103,11 +105,12 @@ public class UserController {
         user.setEmail(request.getEmail());
         user.setAge(request.getAge());
         user.setStatus(request.getStatus());
-        User updatedUser = userService.updateUser(user);
+        SysUser updatedUser = userService.updateUser(user);
         return ResponseEntity.ok(updatedUser);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('system:user:delete')")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         boolean deleted = userService.deleteUser(id);
         if (deleted) {
@@ -118,16 +121,18 @@ public class UserController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<IPage<User>> getAllUsers(
+    @PreAuthorize("hasAuthority('system:user:list')")
+    public ResponseEntity<IPage<SysUser>> getAllUsers(
             @RequestParam(defaultValue = "1") int pageNum,
             @RequestParam(defaultValue = "10") int pageSize) {
-        IPage<User> userPage = userService.getUserPage(pageNum, pageSize);
+        IPage<SysUser> userPage = userService.getUserPage(pageNum, pageSize);
         return ResponseEntity.ok(userPage);
     }
 
     @PutMapping("/{id}/roles")
+    @PreAuthorize("hasAuthority('system:user:edit')")
     public ResponseEntity<Void> assignRoles(@PathVariable Long id, @RequestBody UserRoleAssignRequest request) {
-        User user = userService.getUserById(id);
+        SysUser user = userService.getUserById(id);
         if (user == null) {
             return ResponseEntity.notFound().build();
         }
@@ -136,12 +141,13 @@ public class UserController {
     }
 
     @GetMapping("/{id}/roles")
-    public ResponseEntity<List<Role>> getUserRoles(@PathVariable Long id) {
-        User user = userService.getUserById(id);
+    @PreAuthorize("hasAuthority('system:user:query')")
+    public ResponseEntity<List<SysRole>> getUserRoles(@PathVariable Long id) {
+        SysUser user = userService.getUserById(id);
         if (user == null) {
             return ResponseEntity.notFound().build();
         }
-        List<Role> roles = roleService.getRolesByUserId(id);
+        List<SysRole> roles = roleService.getRolesByUserId(id);
         return ResponseEntity.ok(roles);
     }
 }

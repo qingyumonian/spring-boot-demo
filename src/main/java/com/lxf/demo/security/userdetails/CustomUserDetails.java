@@ -1,66 +1,31 @@
 package com.lxf.demo.security.userdetails;
 
-import com.lxf.demo.modules.entity.User;
+import com.lxf.demo.modules.entity.SysUser;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-public class CustomUserDetails implements UserDetails {
+public class CustomUserDetails extends User {
+    @Getter
+    @Setter
+    private Long id;
 
-    private final User user;
+    @Getter
+    @Setter
+    private String type;
 
-    public CustomUserDetails(User user) {
-        this.user = user;
+    public CustomUserDetails(Long id, String username, String password, Collection<? extends GrantedAuthority> authorities) {
+        super(username, password, true, true, true, true, authorities);
+        this.id = id;
     }
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        String role = user.getRole() != null ? user.getRole() : "USER";
-        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role));
-    }
-
-    @Override
-    public String getPassword() {
-        return user.getPassword();
-    }
-
-    @Override
-    public String getUsername() {
-        return user.getUsername();
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return user.getStatus() != null && user.getStatus() == 1;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public Long getUserId() {
-        return user.getId();
-    }
-
-    public String getRole() {
-        return user.getRole();
-    }
 }

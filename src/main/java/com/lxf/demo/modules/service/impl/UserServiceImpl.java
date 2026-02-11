@@ -4,18 +4,25 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.lxf.demo.modules.entity.UserRole;
+import com.lxf.demo.modules.entity.SysMenu;
+import com.lxf.demo.modules.entity.SysUserRole;
+import com.lxf.demo.modules.mapper.MenuMapper;
+import com.lxf.demo.modules.mapper.RoleMenuMapper;
 import com.lxf.demo.modules.mapper.UserRoleMapper;
-import com.lxf.demo.modules.entity.User;
+import com.lxf.demo.modules.entity.SysUser;
 import com.lxf.demo.modules.mapper.UserMapper;
 import com.lxf.demo.modules.service.IUserService;
 import com.lxf.demo.security.encoder.Md5PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements IUserService {
@@ -27,10 +34,16 @@ public class UserServiceImpl implements IUserService {
     private UserRoleMapper userRoleMapper;
 
     @Resource
+    private RoleMenuMapper roleMenuMapper;
+
+    @Resource
+    private MenuMapper menuMapper;
+
+    @Resource
     private Md5PasswordEncoder md5PasswordEncoder;
 
     @Override
-    public User saveUser(User user) {
+    public SysUser saveUser(SysUser user) {
         if (user.getPassword() != null) {
             user.setPassword(md5PasswordEncoder.encode(user.getPassword()));
         }
@@ -45,12 +58,12 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public User getUserById(Long id) {
+    public SysUser getUserById(Long id) {
         return userMapper.selectById(id);
     }
 
     @Override
-    public User updateUser(User user) {
+    public SysUser updateUser(SysUser user) {
         userMapper.updateById(user);
         return user;
     }
@@ -61,41 +74,41 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public List<User> getAllUsers() {
+    public List<SysUser> getAllUsers() {
         return userMapper.selectList(null);
     }
 
     @Override
-    public IPage<User> getUserPage(int pageNum, int pageSize) {
-        Page<User> page = new Page<>(pageNum, pageSize);
+    public IPage<SysUser> getUserPage(int pageNum, int pageSize) {
+        Page<SysUser> page = new Page<>(pageNum, pageSize);
         return userMapper.selectPage(page, null);
     }
 
     @Override
-    public User findByUsername(String username) {
-        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(User::getUsername, username);
+    public SysUser findByUsername(String username) {
+        LambdaQueryWrapper<SysUser> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(SysUser::getUsername, username);
         return userMapper.selectOne(queryWrapper);
     }
 
     @Override
     public void updateLastLoginTime(Long userId) {
-        LambdaUpdateWrapper<User> updateWrapper = new LambdaUpdateWrapper<>();
-        updateWrapper.eq(User::getId, userId)
-                .set(User::getLastLoginTime, LocalDateTime.now());
+        LambdaUpdateWrapper<SysUser> updateWrapper = new LambdaUpdateWrapper<>();
+        updateWrapper.eq(SysUser::getId, userId)
+                .set(SysUser::getLastLoginTime, LocalDateTime.now());
         userMapper.update(null, updateWrapper);
     }
 
     @Override
     @Transactional
     public void assignRoles(Long userId, List<Long> roleIds) {
-        LambdaQueryWrapper<UserRole> deleteWrapper = new LambdaQueryWrapper<>();
-        deleteWrapper.eq(UserRole::getUserId, userId);
+        LambdaQueryWrapper<SysUserRole> deleteWrapper = new LambdaQueryWrapper<>();
+        deleteWrapper.eq(SysUserRole::getUserId, userId);
         userRoleMapper.delete(deleteWrapper);
 
         if (roleIds != null && !roleIds.isEmpty()) {
             for (Long roleId : roleIds) {
-                UserRole userRole = new UserRole();
+                SysUserRole userRole = new SysUserRole();
                 userRole.setUserId(userId);
                 userRole.setRoleId(roleId);
                 userRoleMapper.insert(userRole);
@@ -106,5 +119,38 @@ public class UserServiceImpl implements IUserService {
     @Override
     public List<Long> getUserRoleIds(Long userId) {
         return userRoleMapper.selectRoleIdsByUserId(userId);
+    }
+
+    @Override
+    public Set<String> getPermissionsByUserId(Long userId) {
+        Set<String> permissions = new HashSet<>();
+
+        // 1. 获取用户的角色ID列表
+        List<Long> roleIds = userRoleMapper.selectRoleIdsByUserId(userId);
+        if (roleIds == null || roleIds.isEmpty()) {
+            return permissions;
+        }
+
+        // 2. 获取所有角色对应的菜单ID
+        Set<Long> menuIds = new HashSet<>();
+        for (Long roleId : roleIds) {
+            List<Long> roleMenuIds = roleMenuMapper.selectMenuIdsByRoleId(roleId);
+            if (roleMenuIds != null) {
+                menuIds.addAll(roleMenuIds);
+            }
+        }
+
+        if (menuIds.isEmpty()) {
+            return permissions;
+        }
+
+        // 3. 查询菜单并提取权限标识
+        List<SysMenu> menus = menuMapper.selectBatchIds(menuIds);
+        permissions = menus.stream()
+                .map(SysMenu::getPermission)
+                .filter(StringUtils::hasText)
+                .collect(Collectors.toSet());
+
+        return permissions;
     }
 }

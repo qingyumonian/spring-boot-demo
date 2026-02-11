@@ -21,7 +21,9 @@
       "Bash(timeout:*)",
       "Bash(findstr:*)",
       "Bash(\"D:\\\\code\\\\interview\\\\SpringBootDemo\\\\mvnw.cmd\" -f \"D:\\\\code\\\\interview\\\\SpringBootDemo\\\\pom.xml\" clean compile)",
-      "Bash(\"D:\\\\code\\\\interview\\\\SpringBootDemo\\\\mvnw.cmd\" -f \"D:\\\\code\\\\interview\\\\SpringBootDemo\\\\pom.xml\" compile)"
+      "Bash(\"D:\\\\code\\\\interview\\\\SpringBootDemo\\\\mvnw.cmd\" -f \"D:\\\\code\\\\interview\\\\SpringBootDemo\\\\pom.xml\" compile)",
+      "Bash(mvnw.cmd compile:*)",
+      "Bash(powershell -Command \".\\\\mvnw.cmd compile -q\")"
     ]
   }
 }
