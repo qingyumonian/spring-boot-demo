@@ -3,3 +3,22 @@ spring:
     name: SpringBootDemo
   profiles:
     active: dev
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: springboot
+            client-secret: rhP74DrlG3IZpW6GmoFNEyUmlAcnD0y3
+            scope: openid
+            authorization-grant-type: authorization_code
+            redirect-uri: http://localhost:8888/api/auth/keycloak
+        provider:
+          keycloak:
+            authorization-uri: http://localhost:8080/realms/selfTest/protocol/openid-connect/auth
+            token-uri: http://localhost:8080/realms/selfTest/protocol/openid-connect/token
+            user-info-uri: http://localhost:8080/realms/selfTest/protocol/openid-connect/userinfo
+            user-name-attribute: preferred_username
+            jwk-set-uri: http://localhost:8080/realms/selfTest/protocol/openid-connect/certs
+            logout-endpoint: http://localhost:8080/realms/selfTest/protocol/openid-connect/logout
+

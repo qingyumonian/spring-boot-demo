@@ -24,14 +24,5 @@ public interface IRoleService {
 
     List<SysRole> getRolesByUserId(Long userId);
 
-    interface TokenService {
 
-        String saveAccessToken(CustomUserDetails userDetails);
-
-        CustomUserDetails getUserByToken(String token);
-
-        void removeAccessToken(String token);
-
-        boolean validateToken(String token);
-    }
 }

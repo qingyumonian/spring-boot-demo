@@ -1,7 +1,7 @@
 package com.lxf.demo.modules.controller;
 
 import com.lxf.demo.common.result.R;
-import com.lxf.demo.modules.service.IRoleService;
+import com.lxf.demo.modules.service.ITokenService;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,7 +25,7 @@ public class AuthController {
     private static final String TOKEN_HEADER = "am_access_token";
 
     @Resource
-    private IRoleService.TokenService tokenService;
+    private ITokenService tokenService;
 
     @PostMapping("/logout")
     public R<Void> logout(HttpServletRequest request, HttpServletResponse response) {

@@ -1,6 +1,7 @@
 package com.lxf.demo.security.filter;
 
 import com.lxf.demo.modules.service.IRoleService;
+import com.lxf.demo.modules.service.ITokenService;
 import com.lxf.demo.security.AuthenticationToken;
 import com.lxf.demo.security.handler.FormAuthFailHandler;
 import com.lxf.demo.security.userdetails.CustomUserDetails;
@@ -27,7 +28,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     private static final String TOKEN_HEADER = "am_access_token";
 
     @Resource
-    private IRoleService.TokenService tokenService;
+    private ITokenService tokenService;
     @Resource
     private FormAuthFailHandler authenticationFailureHandler;
 

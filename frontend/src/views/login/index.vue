@@ -48,6 +48,22 @@
           <span v-else>Logging in...</span>
         </el-button>
 
+        <div class="divider">
+          <span>Or login with</span>
+        </div>
+
+        <el-button
+          type="default"
+          size="large"
+          class="keycloak-button"
+          @click="handleKeycloakLogin"
+        >
+          <svg class="keycloak-icon" viewBox="0 0 24 24" width="20" height="20">
+            <path fill="currentColor" d="M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.18l6.9 3.45L12 11.09 5.1 7.63 12 4.18zM4 8.81l7 3.5v6.88l-7-3.5V8.81zm9 10.38v-6.88l7-3.5v6.88l-7 3.5z"/>
+          </svg>
+          <span>Keycloak SSO</span>
+        </el-button>
+
         <div class="tips">
           <span>Default account: admin / 123456</span>
         </div>
@@ -112,6 +128,12 @@ const handleLogin = async () => {
       loading.value = false
     }
   })
+}
+
+const handleKeycloakLogin = () => {
+  // Redirect to Keycloak OAuth2 authorization endpoint
+  const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8888'
+  window.location.href = `${baseUrl}/oauth2/authorization/keycloak`
 }
 </script>
 
@@ -191,6 +213,49 @@ const handleLogin = async () => {
 
   &:hover {
     background: linear-gradient(135deg, #457b9d 0%, #1d3557 100%);
+  }
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  margin: 20px 0;
+  color: #909399;
+  font-size: 13px;
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #dcdfe6;
+  }
+
+  span {
+    padding: 0 15px;
+  }
+}
+
+.keycloak-button {
+  width: 100%;
+  height: 44px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid #dcdfe6;
+  background: #fff;
+  color: #606266;
+
+  &:hover {
+    border-color: #409eff;
+    color: #409eff;
+    background: #ecf5ff;
+  }
+
+  .keycloak-icon {
+    flex-shrink: 0;
   }
 }
 

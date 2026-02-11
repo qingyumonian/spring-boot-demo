@@ -34,4 +34,9 @@ mybatis-plus:
 
 # Auth Configuration
 auth:
-  token-timeout: 3600
+  token-timeout: 36000
+  frontend-url: http://localhost:3000
+
+
+server:
+  port: 8888

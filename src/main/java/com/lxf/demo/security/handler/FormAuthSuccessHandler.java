@@ -4,10 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lxf.demo.common.result.R;
 import com.lxf.demo.modules.dto.LoginResponse;
 import com.lxf.demo.modules.service.IRoleService;
+import com.lxf.demo.modules.service.ITokenService;
 import com.lxf.demo.security.userdetails.CustomUserDetails;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.token.TokenService;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
@@ -28,7 +30,7 @@ import java.io.IOException;
 public class FormAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     @Resource
-    private IRoleService.TokenService tokenService;
+    private ITokenService tokenService;
 
     @Resource
     private ObjectMapper objectMapper;

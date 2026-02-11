@@ -2,14 +2,13 @@ package com.lxf.demo.modules.service.impl;
 
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.lxf.demo.modules.service.IRoleService;
 import com.lxf.demo.modules.service.IUserService;
 import com.lxf.demo.modules.entity.SysUser;
+import com.lxf.demo.modules.service.ITokenService;
 import com.lxf.demo.security.userdetails.CustomUserDetails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.core.userdetails.UserCache;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -18,7 +17,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 @Service
-public class TokenServiceImpl implements IRoleService.TokenService {
+public class TokenServiceImpl implements ITokenService {
 
     private static final String TOKEN_PREFIX = "auth:token:access:";
 
