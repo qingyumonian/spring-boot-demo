@@ -4,16 +4,14 @@ import com.lxf.demo.security.userdetails.CustomUserDetails;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
-
-import java.util.Collection;
 
 /**
+ * 认证信息-》包含用户信息，权限信息，token 在SecurityContext中流转
  * @author lixuefei
  * @date 2026/02/10 20:31
  **/
 
-public class EzAuthenticationToken extends AbstractAuthenticationToken {
+public class AuthenticationToken extends AbstractAuthenticationToken {
 
     @Getter
     @Setter
@@ -24,7 +22,7 @@ public class EzAuthenticationToken extends AbstractAuthenticationToken {
 
 
 
-    public EzAuthenticationToken(CustomUserDetails userDetails, String accessToken) {
+    public AuthenticationToken(CustomUserDetails userDetails, String accessToken) {
         super(userDetails.getAuthorities());
         this.userDetails = userDetails;
         this.accessToken = accessToken;

@@ -1,11 +1,10 @@
 package com.lxf.demo.security.filter;
 
 import com.lxf.demo.modules.service.IRoleService;
-import com.lxf.demo.security.EzAuthenticationToken;
+import com.lxf.demo.security.AuthenticationToken;
 import com.lxf.demo.security.handler.FormAuthFailHandler;
 import com.lxf.demo.security.userdetails.CustomUserDetails;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -40,9 +39,9 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
             if (StringUtils.hasText(token) && tokenService.validateToken(token)) {
                 CustomUserDetails userDetails = tokenService.getUserByToken(token);
-                EzAuthenticationToken authentication = null;
+                AuthenticationToken authentication = null;
                 if (userDetails != null) {
-                     authentication = new EzAuthenticationToken(userDetails, token);
+                     authentication = new AuthenticationToken(userDetails, token);
                     SecurityContext context = SecurityContextHolder.createEmptyContext();
                     context.setAuthentication(authentication);
                     SecurityContextHolder.setContext(context);

@@ -4,8 +4,7 @@ import com.lxf.demo.modules.dto.MenuCreateRequest;
 import com.lxf.demo.modules.dto.MenuUpdateRequest;
 import com.lxf.demo.modules.entity.SysMenu;
 import com.lxf.demo.modules.service.IMenuService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import com.lxf.demo.common.result.R;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +20,7 @@ public class MenuController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('system:menu:add')")
-    public ResponseEntity<SysMenu> createMenu(@RequestBody MenuCreateRequest request) {
+    public R<SysMenu> createMenu(@RequestBody MenuCreateRequest request) {
         SysMenu menu = new SysMenu();
         menu.setParentId(request.getParentId());
         menu.setMenuName(request.getMenuName());
@@ -34,40 +33,40 @@ public class MenuController {
         menu.setStatus(1); // 默认启用
         menu.setSortOrder(request.getSortOrder());
         SysMenu savedMenu = menuService.saveMenu(menu);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedMenu);
+        return R.ok(savedMenu);
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('system:menu:query')")
-    public ResponseEntity<SysMenu> getMenuById(@PathVariable Long id) {
+    public R<SysMenu> getMenuById(@PathVariable Long id) {
         SysMenu menu = menuService.getMenuById(id);
         if (menu != null) {
-            return ResponseEntity.ok(menu);
+            return R.ok(menu);
         } else {
-            return ResponseEntity.notFound().build();
+            return R.fail(404, "菜单不存在");
         }
     }
 
     @GetMapping
     @PreAuthorize("hasAuthority('system:menu:query')")
-    public ResponseEntity<List<SysMenu>> getAllMenus() {
+    public R<List<SysMenu>> getAllMenus() {
         List<SysMenu> menus = menuService.getAllMenus();
-        return ResponseEntity.ok(menus);
+        return R.ok(menus);
     }
 
     @GetMapping("/tree")
     @PreAuthorize("hasAuthority('system:menu:query')")
-    public ResponseEntity<List<SysMenu>> getMenuTree() {
+    public R<List<SysMenu>> getMenuTree() {
         List<SysMenu> menuTree = menuService.getMenuTree();
-        return ResponseEntity.ok(menuTree);
+        return R.ok(menuTree);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('system:menu:edit')")
-    public ResponseEntity<SysMenu> updateMenu(@PathVariable Long id, @RequestBody MenuUpdateRequest request) {
+    public R<SysMenu> updateMenu(@PathVariable Long id, @RequestBody MenuUpdateRequest request) {
         SysMenu menu = menuService.getMenuById(id);
         if (menu == null) {
-            return ResponseEntity.notFound().build();
+            return R.fail(404, "菜单不存在");
         }
         menu.setParentId(request.getParentId());
         menu.setMenuName(request.getMenuName());
@@ -80,17 +79,17 @@ public class MenuController {
         menu.setStatus(1); // 默认启用
         menu.setSortOrder(request.getSortOrder());
         SysMenu updatedMenu = menuService.updateMenu(menu);
-        return ResponseEntity.ok(updatedMenu);
+        return R.ok(updatedMenu);
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('system:menu:delete')")
-    public ResponseEntity<Void> deleteMenu(@PathVariable Long id) {
+    public R<Void> deleteMenu(@PathVariable Long id) {
         boolean deleted = menuService.deleteMenu(id);
         if (deleted) {
-            return ResponseEntity.noContent().build();
+            return R.ok();
         } else {
-            return ResponseEntity.notFound().build();
+            return R.fail(404, "菜单不存在");
         }
     }
 }

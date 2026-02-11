@@ -11,7 +11,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 /**
  * 认证控制器
@@ -29,7 +28,7 @@ public class AuthController {
     private IRoleService.TokenService tokenService;
 
     @PostMapping("/logout")
-    public R<Void> logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public R<Void> logout(HttpServletRequest request, HttpServletResponse response) {
         // 从请求中获取token
         String token = getTokenFromRequest(request);
 
@@ -44,9 +43,6 @@ public class AuthController {
         cookie.setHttpOnly(true);
         cookie.setMaxAge(0);
         response.addCookie(cookie);
-
-        // 重定向到登录页面
-        response.sendRedirect("/login.html");
 
         return R.ok();
     }

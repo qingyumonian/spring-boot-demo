@@ -10,8 +10,7 @@ import com.lxf.demo.modules.service.IMenuService;
 import com.lxf.demo.modules.service.IRoleService;
 import com.lxf.demo.modules.service.IUserService;
 import com.lxf.demo.security.userdetails.CustomUserDetails;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -73,7 +72,7 @@ public class UserController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('system:user:add')")
-    public ResponseEntity<SysUser> createUser(@RequestBody UserCreateRequest request) {
+    public R<SysUser> createUser(@RequestBody UserCreateRequest request) {
         SysUser user = new SysUser();
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
@@ -81,74 +80,74 @@ public class UserController {
         user.setPassword(request.getPassword());
         user.setStatus(1); // 默认启用状态
         SysUser savedUser = userService.saveUser(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
+        return R.ok(savedUser);
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('system:user:query')")
-    public ResponseEntity<SysUser> getUserById(@PathVariable Long id) {
+    public R<SysUser> getUserById(@PathVariable Long id) {
         SysUser user = userService.getUserById(id);
         if (user != null) {
-            return ResponseEntity.ok(user);
+            return R.ok(user);
         } else {
-            return ResponseEntity.notFound().build();
+            return R.fail(404, "用户不存在");
         }
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('system:user:edit')")
-    public ResponseEntity<SysUser> updateUser(@PathVariable Long id, @RequestBody UserUpdateRequest request) {
+    public R<SysUser> updateUser(@PathVariable Long id, @RequestBody UserUpdateRequest request) {
         SysUser user = userService.getUserById(id);
         if (user == null) {
-            return ResponseEntity.notFound().build();
+            return R.fail(404, "用户不存在");
         }
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
         user.setAge(request.getAge());
         user.setStatus(request.getStatus());
         SysUser updatedUser = userService.updateUser(user);
-        return ResponseEntity.ok(updatedUser);
+        return R.ok(updatedUser);
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('system:user:delete')")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+    public R<Void> deleteUser(@PathVariable Long id) {
         boolean deleted = userService.deleteUser(id);
         if (deleted) {
-            return ResponseEntity.noContent().build();
+            return R.ok();
         } else {
-            return ResponseEntity.notFound().build();
+            return R.fail(404, "用户不存在");
         }
     }
 
     @GetMapping("/list")
     @PreAuthorize("hasAuthority('system:user:list')")
-    public ResponseEntity<IPage<SysUser>> getAllUsers(
+    public R<IPage<SysUser>> getAllUsers(
             @RequestParam(defaultValue = "1") int pageNum,
             @RequestParam(defaultValue = "10") int pageSize) {
         IPage<SysUser> userPage = userService.getUserPage(pageNum, pageSize);
-        return ResponseEntity.ok(userPage);
+        return R.ok(userPage);
     }
 
     @PutMapping("/{id}/roles")
     @PreAuthorize("hasAuthority('system:user:edit')")
-    public ResponseEntity<Void> assignRoles(@PathVariable Long id, @RequestBody UserRoleAssignRequest request) {
+    public R<Void> assignRoles(@PathVariable Long id, @RequestBody UserRoleAssignRequest request) {
         SysUser user = userService.getUserById(id);
         if (user == null) {
-            return ResponseEntity.notFound().build();
+            return R.fail(404, "用户不存在");
         }
         userService.assignRoles(id, request.getRoleIds());
-        return ResponseEntity.ok().build();
+        return R.ok();
     }
 
     @GetMapping("/{id}/roles")
     @PreAuthorize("hasAuthority('system:user:query')")
-    public ResponseEntity<List<SysRole>> getUserRoles(@PathVariable Long id) {
+    public R<List<SysRole>> getUserRoles(@PathVariable Long id) {
         SysUser user = userService.getUserById(id);
         if (user == null) {
-            return ResponseEntity.notFound().build();
+            return R.fail(404, "用户不存在");
         }
         List<SysRole> roles = roleService.getRolesByUserId(id);
-        return ResponseEntity.ok(roles);
+        return R.ok(roles);
     }
 }
