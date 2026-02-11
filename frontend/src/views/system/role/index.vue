@@ -45,7 +45,7 @@
         <div class="table-header">
           <span class="title">Role List</span>
           <div class="actions">
-            <el-button type="primary" :icon="Plus" @click="handleAdd">Add Role</el-button>
+            <el-button type="primary" :icon="Plus" @click="handleAdd" v-hasPermission="'system:role:add'">Add Role</el-button>
           </div>
         </div>
       </template>
@@ -67,9 +67,9 @@
         <el-table-column prop="createTime" label="Created At" width="180" />
         <el-table-column label="Actions" width="240" align="center" fixed="right">
           <template #default="scope">
-            <el-button type="primary" link :icon="Edit" @click="handleEdit(scope.row)">Edit</el-button>
-            <el-button type="primary" link :icon="Menu" @click="handleAssignMenus(scope.row)">Menus</el-button>
-            <el-button type="danger" link :icon="Delete" @click="handleDelete(scope.row)">Delete</el-button>
+            <el-button type="primary" link :icon="Edit" @click="handleEdit(scope.row)" v-hasPermission="'system:role:edit'">Edit</el-button>
+            <el-button type="primary" link :icon="Menu" @click="handleAssignMenus(scope.row)" v-hasPermission="'system:role:edit'">Menus</el-button>
+            <el-button type="danger" link :icon="Delete" @click="handleDelete(scope.row)" v-hasPermission="'system:role:delete'">Delete</el-button>
           </template>
         </el-table-column>
       </el-table>

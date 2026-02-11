@@ -9,6 +9,7 @@ import com.lxf.demo.modules.service.IMenuService;
 import com.lxf.demo.modules.service.IRoleService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -25,6 +26,7 @@ public class RoleController {
     private IMenuService menuService;
 
     @PostMapping
+    @PreAuthorize("hasAuthority('system:role:add')")
     public ResponseEntity<SysRole> createRole(@RequestBody RoleCreateRequest request) {
         SysRole role = new SysRole();
         role.setRoleName(request.getRoleName());
@@ -36,6 +38,7 @@ public class RoleController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('system:role:query')")
     public ResponseEntity<SysRole> getRoleById(@PathVariable Long id) {
         SysRole role = roleService.getRoleById(id);
         if (role != null) {
@@ -46,6 +49,7 @@ public class RoleController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('system:role:edit')")
     public ResponseEntity<SysRole> updateRole(@PathVariable Long id, @RequestBody RoleUpdateRequest request) {
         SysRole role = roleService.getRoleById(id);
         if (role == null) {
@@ -60,6 +64,7 @@ public class RoleController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('system:role:delete')")
     public ResponseEntity<Void> deleteRole(@PathVariable Long id) {
         boolean deleted = roleService.deleteRole(id);
         if (deleted) {
@@ -70,6 +75,7 @@ public class RoleController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAuthority('system:role:query')")
     public ResponseEntity<IPage<SysRole>> getAllRoles(
             @RequestParam(defaultValue = "1") int pageNum,
             @RequestParam(defaultValue = "10") int pageSize) {
@@ -78,6 +84,7 @@ public class RoleController {
     }
 
     @PutMapping("/{id}/menus")
+    @PreAuthorize("hasAuthority('system:role:edit')")
     public ResponseEntity<Void> assignMenus(@PathVariable Long id, @RequestBody List<Long> menuIds) {
         SysRole role = roleService.getRoleById(id);
         if (role == null) {
@@ -88,6 +95,7 @@ public class RoleController {
     }
 
     @GetMapping("/{id}/menus")
+    @PreAuthorize("hasAuthority('system:role:query')")
     public ResponseEntity<List<SysMenu>> getRoleMenus(@PathVariable Long id) {
         SysRole role = roleService.getRoleById(id);
         if (role == null) {

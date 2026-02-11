@@ -1,6 +1,7 @@
 package com.lxf.demo.modules.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.lxf.demo.common.result.R;
 import com.lxf.demo.modules.dto.UserCreateRequest;
 import com.lxf.demo.modules.dto.UserRoleAssignRequest;
 import com.lxf.demo.modules.dto.UserUpdateRequest;
@@ -36,21 +37,21 @@ public class UserController {
     private IMenuService menuService;
 
     @GetMapping("/current")
-    public ResponseEntity<Map<String, Object>> getCurrentUser() {
+    public R<Map<String, Object>> getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return R.fail(401, "未登录");
         }
 
         Object principal = authentication.getPrincipal();
         if (!(principal instanceof CustomUserDetails)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return R.fail(401, "未登录");
         }
 
         CustomUserDetails userDetails = (CustomUserDetails) principal;
         SysUser user = userService.getUserById(userDetails.getId());
         if (user == null) {
-            return ResponseEntity.notFound().build();
+            return R.fail(404, "用户不存在");
         }
 
         List<Long> roleIds = userService.getUserRoleIds(user.getId());
@@ -67,7 +68,7 @@ public class UserController {
         userInfo.put("menus", menus);
         userInfo.put("permissions", permissions);
 
-        return ResponseEntity.ok(userInfo);
+        return R.ok(userInfo);
     }
 
     @PostMapping

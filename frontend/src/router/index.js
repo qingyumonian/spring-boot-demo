@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import { getToken } from '@/utils/auth'
+import { useUserStore } from '@/store/user'
 
 NProgress.configure({ showSpinner: false })
 
@@ -58,7 +59,7 @@ const router = createRouter({
 // Route guards
 const whiteList = ['/login']
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   NProgress.start()
   document.title = to.meta.title ? `${to.meta.title} - Admin Panel` : 'Admin Panel'
 
@@ -69,6 +70,19 @@ router.beforeEach((to, from, next) => {
       next({ path: '/' })
       NProgress.done()
     } else {
+      const userStore = useUserStore()
+      // Fetch user info if token exists but userInfo is missing (page refresh)
+      if (!userStore.userInfo) {
+        try {
+          await userStore.getUserInfo()
+        } catch (error) {
+          // Token invalid, clear and redirect to login
+          userStore.resetState()
+          next(`/login?redirect=${to.path}`)
+          NProgress.done()
+          return
+        }
+      }
       next()
     }
   } else {

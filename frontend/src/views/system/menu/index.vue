@@ -39,7 +39,7 @@
             <el-button type="info" plain :icon="Sort" @click="toggleExpandAll">
               {{ isExpandAll ? 'Collapse All' : 'Expand All' }}
             </el-button>
-            <el-button type="primary" :icon="Plus" @click="handleAdd()">Add Menu</el-button>
+            <el-button type="primary" :icon="Plus" @click="handleAdd()" v-hasPermission="'system:menu:add'">Add Menu</el-button>
           </div>
         </div>
       </template>
@@ -89,9 +89,9 @@
         <el-table-column prop="createTime" label="Created At" width="180" />
         <el-table-column label="Actions" width="200" align="center" fixed="right">
           <template #default="scope">
-            <el-button type="primary" link :icon="Edit" @click="handleEdit(scope.row)">Edit</el-button>
-            <el-button type="primary" link :icon="Plus" @click="handleAdd(scope.row)">Add</el-button>
-            <el-button type="danger" link :icon="Delete" @click="handleDelete(scope.row)">Delete</el-button>
+            <el-button type="primary" link :icon="Edit" @click="handleEdit(scope.row)" v-hasPermission="'system:menu:edit'">Edit</el-button>
+            <el-button type="primary" link :icon="Plus" @click="handleAdd(scope.row)" v-hasPermission="'system:menu:add'">Add</el-button>
+            <el-button type="danger" link :icon="Delete" @click="handleDelete(scope.row)" v-hasPermission="'system:menu:delete'">Delete</el-button>
           </template>
         </el-table-column>
       </el-table>

@@ -1,5 +1,12 @@
 import request from '@/utils/request'
 
+export function getCurrentUser() {
+  return request({
+    url: '/api/users/current',
+    method: 'get'
+  })
+}
+
 export function getUserList(params) {
   return request({
     url: '/api/users/list',

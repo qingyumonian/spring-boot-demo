@@ -41,6 +41,11 @@ service.interceptors.response.use(
         router.push('/login')
       }
 
+      // Forbidden - no permission
+      if (res.code === 403) {
+        ElMessage.error('No permission to perform this action')
+      }
+
       return Promise.reject(new Error(res.message || 'Error'))
     }
 
@@ -48,7 +53,24 @@ service.interceptors.response.use(
   },
   error => {
     console.error('Response error:', error)
-    ElMessage.error(error.message || 'Network error')
+
+    // Handle HTTP status code errors
+    if (error.response) {
+      const status = error.response.status
+      if (status === 401) {
+        Cookies.remove(TOKEN_KEY)
+        localStorage.removeItem(TOKEN_KEY)
+        router.push('/login')
+        ElMessage.error('Session expired, please login again')
+      } else if (status === 403) {
+        ElMessage.error('No permission to perform this action')
+      } else {
+        ElMessage.error(error.message || 'Network error')
+      }
+    } else {
+      ElMessage.error(error.message || 'Network error')
+    }
+
     return Promise.reject(error)
   }
 )

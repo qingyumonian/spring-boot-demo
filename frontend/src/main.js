@@ -6,6 +6,7 @@ import 'element-plus/dist/index.css'
 import App from './App.vue'
 import router from './router'
 import pinia from './store'
+import permissionDirective from './directives/permission'
 
 import './styles/index.scss'
 
@@ -19,5 +20,6 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 app.use(ElementPlus)
 app.use(router)
 app.use(pinia)
+app.use(permissionDirective)
 
 app.mount('#app')
