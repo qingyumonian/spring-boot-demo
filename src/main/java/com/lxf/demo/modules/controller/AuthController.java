@@ -2,9 +2,12 @@ package com.lxf.demo.modules.controller;
 
 import com.lxf.demo.common.result.R;
 import com.lxf.demo.modules.service.ITokenService;
+import com.lxf.demo.utils.JwtTokenUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
@@ -17,7 +20,9 @@ import javax.servlet.http.HttpServletResponse;
  * 实际认证由Spring Security处理
  * 登录端点: POST /api/auth/form
  * 登出端点: POST /api/auth/logout
+ * oidc单点登出端点: POST /api/auth/logout/callBack/oidc
  */
+@Slf4j
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -46,6 +51,19 @@ public class AuthController {
 
         return R.ok();
     }
+
+    /**
+     * 追加keycloak的登出接口
+     * @param logoutToken
+     */
+    @PostMapping
+    @RequestMapping("/logout/callBack/oidc")
+    public void logoutCallBackOidc(@RequestParam(value = "logout_token",required = false) String logoutToken) {
+        log.info("登出回调响应值 {} ", logoutToken);
+        String sub = JwtTokenUtil.getSub(logoutToken);
+        tokenService.removeAccessToken(sub);
+    }
+
 
     private String getTokenFromRequest(HttpServletRequest request) {
         // 1. 从header中获取

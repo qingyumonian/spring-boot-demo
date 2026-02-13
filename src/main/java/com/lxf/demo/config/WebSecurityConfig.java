@@ -89,12 +89,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/oauth2/**", "/login/oauth2/**").permitAll()
-                .antMatchers( "/api/auth/logout","/api/auth/**").permitAll()    //允许部分接口可以直接放回
+                .antMatchers( "/api/auth/logout/**","/api/auth/**").permitAll()    //允许部分接口可以直接放回
                 .anyRequest().authenticated()
+                //基础的表单登陆
                 .and().formLogin().loginProcessingUrl("/api/auth/form")//设置登陆接口
                 .successHandler(formAuthSuccessHandler).failureHandler(formAuthFailHandler) //设置登陆成功失败响应
                 .and()
 
+                //增加 keycloak的openid登陆方式
                 .oauth2Login()
                     .authorizationEndpoint()
                         .authorizationRequestRepository(httpCookieOAuth2AuthorizationRequestRepository)
@@ -104,6 +106,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         .and()
                     .successHandler(oidcAuthSuccessHandler)
                     .failureHandler(oidcAuthFailHandler)
+
+                //TODO CAS2.0登陆方式
+
+
                 .and()
                 .exceptionHandling()
                     .authenticationEntryPoint(jsonAuthenticationEntryPoint)   //设置异常响应
