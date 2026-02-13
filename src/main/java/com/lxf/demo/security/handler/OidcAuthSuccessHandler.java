@@ -1,7 +1,8 @@
 package com.lxf.demo.security.handler;
 
+import com.lxf.demo.config.sso.SsoProperties;
 import com.lxf.demo.modules.service.ITokenService;
-import com.lxf.demo.modules.service.OidcUserSyncService;
+import com.lxf.demo.security.sso.SsoUserSyncService;
 import com.lxf.demo.security.userdetails.CustomUserDetails;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,11 +26,16 @@ import java.io.IOException;
 @Component
 public class OidcAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
+    private static final String PROVIDER_NAME = "keycloak";
+
     @Resource
     private ITokenService tokenService;
 
     @Resource
-    private OidcUserSyncService oidcUserSyncService;
+    private SsoUserSyncService ssoUserSyncService;
+
+    @Resource
+    private SsoProperties ssoProperties;
 
     @Value("${auth.token-timeout:3600}")
     private Long tokenTimeout;
@@ -56,8 +62,9 @@ public class OidcAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandle
 
         log.info("OIDC用户信息: sub={}, username={}, email={}", sub, username, email);
 
-        // 同步用户到本地数据库
-        CustomUserDetails userDetails = oidcUserSyncService.syncUser(sub, username, email);
+        // 使用统一SSO用户同步服务同步用户到本地数据库
+        String defaultRole = ssoProperties.getKeycloak().getDefaultRole();
+        CustomUserDetails userDetails = ssoUserSyncService.syncUser(PROVIDER_NAME, sub, username, email, defaultRole);
 
         // 创建token并保存到Redis (复用现有TokenService)
         String token = tokenService.saveAccessToken(userDetails);

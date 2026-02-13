@@ -1,10 +1,13 @@
 package com.lxf.demo.config;
 
+import com.lxf.demo.config.sso.SsoProperties;
 import com.lxf.demo.security.encoder.Md5PasswordEncoder;
 import com.lxf.demo.security.handler.FormAuthFailHandler;
 import com.lxf.demo.security.handler.FormAuthSuccessHandler;
 import com.lxf.demo.security.handler.JsonAuthenticationEntryPoint;
 import com.lxf.demo.security.filter.TokenAuthenticationFilter;
+import com.lxf.demo.security.sso.cas.CasAuthenticationFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -52,6 +55,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Resource
     private com.lxf.demo.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
 
+    @Resource
+    private SsoProperties ssoProperties;
+
+    /**
+     * CAS过滤器 - 仅当sso.cas.enabled=true时注入
+     */
+    @Autowired(required = false)
+    private CasAuthenticationFilter casAuthenticationFilter;
+
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
@@ -93,11 +105,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 //基础的表单登陆
                 .and().formLogin().loginProcessingUrl("/api/auth/form")//设置登陆接口
-                .successHandler(formAuthSuccessHandler).failureHandler(formAuthFailHandler) //设置登陆成功失败响应
-                .and()
+                .successHandler(formAuthSuccessHandler).failureHandler(formAuthFailHandler); //设置登陆成功失败响应
 
-                //增加 keycloak的openid登陆方式
-                .oauth2Login()
+        // 条件配置Keycloak OIDC登录
+        if (ssoProperties.getKeycloak().isEnabled()) {
+            http.oauth2Login()
                     .authorizationEndpoint()
                         .authorizationRequestRepository(httpCookieOAuth2AuthorizationRequestRepository)
                         .and()
@@ -105,16 +117,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         .baseUri("/api/auth/keycloak")
                         .and()
                     .successHandler(oidcAuthSuccessHandler)
-                    .failureHandler(oidcAuthFailHandler)
+                    .failureHandler(oidcAuthFailHandler);
+        }
 
-                //TODO CAS2.0登陆方式
-
-
-                .and()
-                .exceptionHandling()
-                    .authenticationEntryPoint(jsonAuthenticationEntryPoint)   //设置异常响应
+        http.exceptionHandling()
+                .authenticationEntryPoint(jsonAuthenticationEntryPoint)   //设置异常响应
                 .and()
                 .addFilterAfter(tokenAuthenticationFilter, SecurityContextPersistenceFilter.class);  //在管理SecurityContext之后获取token 信息并放入全局中
+
+        // CAS过滤器 - 仅当CAS启用时添加
+        if (casAuthenticationFilter != null) {
+            http.addFilterAfter(casAuthenticationFilter, TokenAuthenticationFilter.class);
+        }
 
         http.headers().frameOptions().disable();
     }

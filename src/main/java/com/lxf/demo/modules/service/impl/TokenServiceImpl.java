@@ -55,7 +55,7 @@ public class TokenServiceImpl implements ITokenService {
         CustomUserDetails userCache;
         Long userId = 0L;
         if (value instanceof LinkedHashMap) {
-            userId = (Long) ((LinkedHashMap<?, ?>) value).get("id");
+            userId = Long.valueOf(((Integer) ((LinkedHashMap<?, ?>) value).get("id")).toString());
         } else if (value instanceof CustomUserDetails) {
             userCache = (CustomUserDetails) value;
             userId = userCache.getId();
@@ -66,7 +66,7 @@ public class TokenServiceImpl implements ITokenService {
         SysUser user = userService.getUserById(userId);
         Set<String> permissions = userService.getPermissionsByUserId(user.getId());
         String[] permArray = permissions.stream().filter(StringUtils::isNotBlank).toArray(String[]::new);
-        return  new CustomUserDetails(user.getId(),user.getUsername(),user.getPassword(), AuthorityUtils.createAuthorityList(permArray) );
+        return new CustomUserDetails(user.getId(), user.getUsername(), user.getPassword(), AuthorityUtils.createAuthorityList(permArray));
     }
 
     @Override
