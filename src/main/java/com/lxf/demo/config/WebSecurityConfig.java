@@ -100,7 +100,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)  //无状态
                 .and()
                 .authorizeRequests()
-                .antMatchers("/oauth2/**", "/login/oauth2/**").permitAll()
+                .antMatchers("/oauth2/**", "/login/oauth2/**","/login/**","/cas/**").permitAll()
                 .antMatchers( "/api/auth/logout/**","/api/auth/**").permitAll()    //允许部分接口可以直接放回
                 .anyRequest().authenticated()
                 //基础的表单登陆

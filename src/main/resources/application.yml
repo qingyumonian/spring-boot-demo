@@ -19,7 +19,7 @@ sso:
   cas:
     enabled: true
     server-url-prefix: https://localhost:8444/cas
-    client-host-url: http://localhost:3000
-    login-path: /api/auth/cas
+    client-host-url: http://localhost:8888
+    login-path: /login/cas
     default-role: USER
 

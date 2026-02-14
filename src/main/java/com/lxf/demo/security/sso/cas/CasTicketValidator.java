@@ -4,6 +4,7 @@ import com.lxf.demo.config.sso.cas.CasProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.client.validation.Cas20ServiceTicketValidator;
+import org.jasig.cas.client.validation.Cas30ServiceTicketValidator;
 import org.jasig.cas.client.validation.TicketValidationException;
 
 import java.util.Map;
@@ -20,7 +21,7 @@ public class CasTicketValidator {
 
     public CasTicketValidator(CasProperties casProperties) {
         this.casProperties = casProperties;
-        this.ticketValidator = new Cas20ServiceTicketValidator(casProperties.getServerUrlPrefix());
+        this.ticketValidator = new Cas30ServiceTicketValidator(casProperties.getServerUrlPrefix());
     }
 
     /**

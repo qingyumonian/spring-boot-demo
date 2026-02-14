@@ -64,6 +64,18 @@
           <span>Keycloak SSO</span>
         </el-button>
 
+        <el-button
+          type="default"
+          size="large"
+          class="cas-button"
+          @click="handleCasLogin"
+        >
+          <svg class="cas-icon" viewBox="0 0 24 24" width="20" height="20">
+            <path fill="currentColor" d="M12 2l9 4.5v11L12 22l-9-4.5v-11L12 2zm0 2.18L6 6.09v7.82l6 3.91 6-3.91V6.09L12 4.18zm-1 3.32h2v6h-2v-6zm0 7h2v2h-2v-2z"/>
+          </svg>
+          <span>CAS SSO</span>
+        </el-button>
+
         <div class="tips">
           <span>Default account: admin / 123456</span>
         </div>
@@ -132,8 +144,17 @@ const handleLogin = async () => {
 
 const handleKeycloakLogin = () => {
   // Redirect to Keycloak OAuth2 authorization endpoint
-  const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8888'
+  const baseUrl = getBaseUrl()
   window.location.href = `${baseUrl}/oauth2/authorization/keycloak`
+}
+
+const handleCasLogin = () => {
+  const baseUrl = getBaseUrl()
+  window.location.href = `${baseUrl}/login/cas`
+}
+
+const getBaseUrl = () => {
+  return import.meta.env.VITE_API_BASE_URL || 'http://localhost:8888'
 }
 </script>
 
@@ -255,6 +276,21 @@ const handleKeycloakLogin = () => {
   }
 
   .keycloak-icon {
+    flex-shrink: 0;
+  }
+}
+
+.cas-button {
+  width: 100%;
+  height: 44px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 10px;
+
+  .cas-icon {
     flex-shrink: 0;
   }
 }
