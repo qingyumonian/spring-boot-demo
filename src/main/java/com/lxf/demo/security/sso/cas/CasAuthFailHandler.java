@@ -5,7 +5,9 @@ import com.lxf.demo.common.result.R;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -13,19 +15,21 @@ import java.nio.charset.StandardCharsets;
 
 /**
  * CAS认证失败处理器
+ * 实现 Spring Security 的 AuthenticationFailureHandler 接口
  * 处理CAS登录失败的情况
  */
 @Slf4j
-public class CasAuthFailHandler {
+public class CasAuthFailHandler implements AuthenticationFailureHandler {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     /**
      * 处理CAS认证失败
      */
+    @Override
     public void onAuthenticationFailure(HttpServletRequest request,
                                         HttpServletResponse response,
-                                        AuthenticationException exception) throws IOException {
+                                        AuthenticationException exception) throws IOException, ServletException {
         log.error("CAS认证失败: {}", exception.getMessage());
 
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
