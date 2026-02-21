@@ -70,6 +70,14 @@ services:
       SSO_CAS_ENABLED: ${SSO_CAS_ENABLED:-false}
       SSO_CAS_SERVER_URL_PREFIX: ${SSO_CAS_SERVER_URL_PREFIX:-}
       SSO_CAS_CLIENT_HOST_URL: ${SSO_CAS_CLIENT_HOST_URL:-}
+      # OpenTelemetry / SigNoz 配置
+      OTEL_ENABLED: ${OTEL_ENABLED:-true}
+      OTEL_SERVICE_NAME: ${OTEL_SERVICE_NAME:-SpringBootDemo}
+      OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-http://host.docker.internal:4317}
+      OTEL_TRACES_EXPORTER: otlp
+      OTEL_METRICS_EXPORTER: otlp
+      OTEL_LOGS_EXPORTER: otlp
+      OTEL_EXPORTER_OTLP_PROTOCOL: grpc
       # JVM 配置
       JAVA_OPTS: ${JAVA_OPTS:--Xms256m -Xmx512m}
     ports:
@@ -81,6 +89,8 @@ services:
         condition: service_healthy
     networks:
       - lxf-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8888/api/auth/health"]
       interval: 30s

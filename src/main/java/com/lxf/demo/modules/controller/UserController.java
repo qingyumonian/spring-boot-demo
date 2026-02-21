@@ -11,6 +11,7 @@ import com.lxf.demo.modules.service.IRoleService;
 import com.lxf.demo.modules.service.IUserService;
 import com.lxf.demo.security.userdetails.CustomUserDetails;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -127,6 +129,8 @@ public class UserController {
             @RequestParam(defaultValue = "10") int pageSize) {
         IPage<SysUser> userPage = userService.getUserPage(pageNum, pageSize);
         return R.ok(userPage);
+//        log.error("自定义异常");
+//        throw new RuntimeException("hahahah");
     }
 
     @PutMapping("/{id}/roles")

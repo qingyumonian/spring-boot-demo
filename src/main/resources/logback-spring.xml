@@ -126,11 +126,11 @@
     <springProfile name="dev">
         <root level="INFO">
             <appender-ref ref="CONSOLE"/>
-<!--            <appender-ref ref="DEBUG_FILE"/>-->
+            <appender-ref ref="DEBUG_FILE"/>
             <appender-ref ref="INFO_FILE"/>
-<!--            <appender-ref ref="WARN_FILE"/>-->
+            <appender-ref ref="WARN_FILE"/>
             <appender-ref ref="ERROR_FILE"/>
-<!--            <appender-ref ref="ALL_FILE"/>-->
+            <appender-ref ref="ALL_FILE"/>
         </root>
         <logger name="com.lxf.demo" level="DEBUG"/>
         <logger name="org.springframework" level="INFO"/>

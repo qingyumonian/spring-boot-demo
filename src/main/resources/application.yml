@@ -4,7 +4,7 @@ spring:
   profiles:
     # 可以在本地新建配置文件 application-local.yml，写入自定义配置项覆盖默认配置
     # application-local.yml 仅在本机有效，不会提交git
-    active: dev,local
+    active: dev
   security:
     oauth2:
       client:
@@ -22,7 +22,6 @@ spring:
             user-info-uri: http://localhost:8080/realms/selfTest/protocol/openid-connect/userinfo
             jwk-set-uri: http://localhost:8080/realms/selfTest/protocol/openid-connect/certs
             user-name-attribute: preferred_username
-
 # SSO配置 - 额外的SSO选项
 sso:
   # Keycloak OIDC配置（enabled控制是否启用，其他配置由spring.security.oauth2.client管理）

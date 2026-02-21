@@ -108,6 +108,13 @@
             <artifactId>spring-security-cas</artifactId>
         </dependency>
 
+        <!-- OpenTelemetry for SigNoz -->
+        <dependency>
+            <groupId>io.opentelemetry</groupId>
+            <artifactId>opentelemetry-api</artifactId>
+            <version>1.32.0</version>
+        </dependency>
+
     </dependencies>
 
     <build>
