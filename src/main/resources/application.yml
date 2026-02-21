@@ -13,7 +13,7 @@ sso:
     client-secret: rhP74DrlG3IZpW6GmoFNEyUmlAcnD0y3
     realm: selfTest
     base-url: http://localhost:8080
-    redirect-uri: http://localhost:8888/api/auth/keycloak
+    redirect-uri: http://localhost:8888/api/auth/sso/keycloak/callback
     default-role: USER
   # CAS 2.0配置
   cas:
