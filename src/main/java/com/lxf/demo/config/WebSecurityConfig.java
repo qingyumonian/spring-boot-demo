@@ -5,13 +5,11 @@ import com.lxf.demo.security.encoder.Md5PasswordEncoder;
 import com.lxf.demo.security.handler.*;
 import com.lxf.demo.security.filter.TokenAuthenticationFilter;
 import com.lxf.demo.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.lxf.demo.security.sso.oidc.OidcAuthFailHandler;
+import com.lxf.demo.security.sso.oidc.OidcAuthSuccessHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.cas.authentication.CasAuthenticationProvider;
-import org.springframework.security.cas.web.CasAuthenticationEntryPoint;
-import org.springframework.security.cas.web.CasAuthenticationFilter;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -22,7 +20,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 @Configuration
@@ -116,9 +113,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .authorizationEndpoint()
                         .authorizationRequestRepository(httpCookieOAuth2AuthorizationRequestRepository)
                         .and()
-                    .redirectionEndpoint()
-                        .baseUri("/api/auth/keycloak")
-                        .and()
+                    // 使用默认的回调路径: /login/oauth2/code/{registrationId}
                     .successHandler(oidcAuthSuccessHandler)
                     .failureHandler(oidcAuthFailHandler);
         }

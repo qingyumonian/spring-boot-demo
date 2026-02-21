@@ -66,6 +66,7 @@ public class SsoController {
      */
     @GetMapping("/{provider}/login-url")
     public R<SsoLoginUrlResponse> getLoginUrl(
+            HttpServletRequest request,
             @PathVariable String provider,
             @RequestParam(required = false) String redirectUri,
             @RequestParam(required = false) String state) {
@@ -81,6 +82,12 @@ public class SsoController {
 
         String loginUrl = ssoProvider.getLoginUrl(redirectUri, actualState);
 
+        // 如果返回的是相对路径，拼接成完整URL（基于后端地址）
+        if (loginUrl.startsWith("/")) {
+            String baseUrl = getBaseUrl(request);
+            loginUrl = baseUrl + loginUrl;
+        }
+
         SsoLoginUrlResponse response = SsoLoginUrlResponse.builder()
                 .provider(provider)
                 .loginUrl(loginUrl)
@@ -91,86 +98,26 @@ public class SsoController {
     }
 
     /**
-     * SSO回调处理（重定向流程）
-     * GET /api/auth/sso/{provider}/callback
-     *
-     * 处理SSO服务器的回调，验证后重定向到前端页面
+     * 获取请求的基础URL
      */
-    @GetMapping("/{provider}/callback")
-    public void handleCallback(
-            @PathVariable String provider,
-            @RequestParam(required = false) String redirectUri,
-            HttpServletRequest request,
-            HttpServletResponse response) throws IOException {
+    private String getBaseUrl(HttpServletRequest request) {
+        String scheme = request.getScheme();
+        String serverName = request.getServerName();
+        int serverPort = request.getServerPort();
 
-        try {
-            SsoProvider ssoProvider = providerRegistry.getProviderOrThrow(provider);
+        StringBuilder url = new StringBuilder();
+        url.append(scheme).append("://").append(serverName);
 
-            if (!ssoProvider.isEnabled()) {
-                redirectWithError(response, redirectUri, "PROVIDER_DISABLED", "SSO提供商未启用");
-                return;
-            }
-
-            SsoAuthenticationResult result = ssoProvider.handleCallback(request);
-
-            // 设置Token Cookie
-            setTokenCookie(response, result.getAccessToken());
-
-            // 重定向到前端页面
-            String targetUrl = buildRedirectUrl(redirectUri, result);
-            log.info("SSO认证成功，重定向到: {}", targetUrl);
-            response.sendRedirect(targetUrl);
-
-        } catch (SsoAuthenticationException e) {
-            log.error("SSO认证失败: provider={}, error={}, message={}",
-                    e.getProvider(), e.getErrorCode(), e.getMessage());
-            redirectWithError(response, redirectUri, e.getErrorCode(), e.getMessage());
-        } catch (Exception e) {
-            log.error("SSO认证异常: provider={}", provider, e);
-            redirectWithError(response, redirectUri, "AUTH_ERROR", "认证处理异常");
+        if (("http".equals(scheme) && serverPort != 80) ||
+                ("https".equals(scheme) && serverPort != 443)) {
+            url.append(":").append(serverPort);
         }
+
+        return url.toString();
     }
 
-    /**
-     * SSO回调处理（JSON响应）
-     * POST /api/auth/sso/{provider}/callback/json
-     *
-     * 处理SSO回调，返回JSON响应而非重定向
-     * 适用于SPA应用的异步处理场景
-     */
-    @PostMapping("/{provider}/callback/json")
-    public R<SsoCallbackResponse> handleCallbackJson(
-            @PathVariable String provider,
-            HttpServletRequest request,
-            HttpServletResponse response) {
 
-        try {
-            SsoProvider ssoProvider = providerRegistry.getProviderOrThrow(provider);
 
-            if (!ssoProvider.isEnabled()) {
-                return R.fail("SSO提供商未启用: " + provider);
-            }
-
-            SsoAuthenticationResult result = ssoProvider.handleCallback(request);
-
-            // 设置Token Cookie
-            setTokenCookie(response, result.getAccessToken());
-
-            SsoCallbackResponse callbackResponse = SsoCallbackResponse.builder()
-                    .token(result.getAccessToken())
-                    .username(result.getUsername())
-                    .expiresIn(result.getExpiresIn())
-                    .provider(provider)
-                    .build();
-
-            return R.ok(callbackResponse);
-
-        } catch (SsoAuthenticationException e) {
-            log.error("SSO认证失败: provider={}, error={}, message={}",
-                    e.getProvider(), e.getErrorCode(), e.getMessage());
-            return R.fail(e.getMessage());
-        }
-    }
 
     /**
      * 获取登出URL
@@ -239,16 +186,7 @@ public class SsoController {
                 .build();
     }
 
-    /**
-     * 设置Token Cookie
-     */
-    private void setTokenCookie(HttpServletResponse response, String token) {
-        Cookie cookie = new Cookie(TOKEN_COOKIE_NAME, token);
-        cookie.setPath("/");
-        cookie.setHttpOnly(true);
-        cookie.setMaxAge(COOKIE_MAX_AGE);
-        response.addCookie(cookie);
-    }
+
 
     /**
      * 清除Token Cookie
@@ -261,27 +199,4 @@ public class SsoController {
         response.addCookie(cookie);
     }
 
-    /**
-     * 构建重定向URL（带Token）
-     */
-    private String buildRedirectUrl(String redirectUri, SsoAuthenticationResult result) {
-        if (!StringUtils.hasText(redirectUri)) {
-            redirectUri = "/";
-        }
-
-        // 将Token作为URL参数附加（供前端获取）
-        String separator = redirectUri.contains("?") ? "&" : "?";
-        return redirectUri + separator + "token=" + result.getAccessToken();
-    }
-
-    /**
-     * 重定向到错误页面
-     */
-    private void redirectWithError(HttpServletResponse response, String redirectUri,
-                                   String errorCode, String errorMessage) throws IOException {
-        String targetUrl = StringUtils.hasText(redirectUri) ? redirectUri : "/";
-        String separator = targetUrl.contains("?") ? "&" : "?";
-        targetUrl += separator + "error=" + errorCode + "&error_description=" + errorMessage;
-        response.sendRedirect(targetUrl);
-    }
 }

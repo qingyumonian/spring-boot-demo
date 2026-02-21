@@ -6,6 +6,7 @@ import com.lxf.demo.modules.service.IUserService;
 import com.lxf.demo.modules.entity.SysUser;
 import com.lxf.demo.modules.service.ITokenService;
 import com.lxf.demo.security.userdetails.CustomUserDetails;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -16,6 +17,7 @@ import java.util.LinkedHashMap;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 @Service
 public class TokenServiceImpl implements ITokenService {
 
@@ -72,6 +74,7 @@ public class TokenServiceImpl implements ITokenService {
     @Override
     public void removeAccessToken(String token) {
         String key = TOKEN_PREFIX + token;
+        log.info("移除token：{}", token);
         redisTemplate.delete(key);
     }
 

@@ -28,13 +28,6 @@ public interface SsoProvider {
      */
     String getLoginUrl(String redirectUri, String state);
 
-    /**
-     * 处理SSO回调请求
-     * @param request HTTP请求（包含ticket/code等参数）
-     * @return 认证结果
-     * @throws SsoAuthenticationException 认证失败时抛出
-     */
-    SsoAuthenticationResult handleCallback(HttpServletRequest request) throws SsoAuthenticationException;
 
     /**
      * 获取SSO登出URL

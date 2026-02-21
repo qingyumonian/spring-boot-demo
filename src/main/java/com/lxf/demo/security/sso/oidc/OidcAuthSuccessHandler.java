@@ -1,4 +1,4 @@
-package com.lxf.demo.security.handler;
+package com.lxf.demo.security.sso.oidc;
 
 import com.lxf.demo.config.sso.SsoProperties;
 import com.lxf.demo.modules.service.ITokenService;

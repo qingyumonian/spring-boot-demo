@@ -4,6 +4,12 @@ import lombok.Data;
 
 /**
  * Keycloak OIDC配置属性
+ *
+ * 注意：OAuth2 客户端配置现在由 Spring Security 标准配置管理：
+ * spring.security.oauth2.client.registration.keycloak.*
+ * spring.security.oauth2.client.provider.keycloak.*
+ *
+ * 本类只保留额外的配置项（enabled, defaultRole, logoutUri）
  */
 @Data
 public class KeycloakProperties {
@@ -14,69 +20,13 @@ public class KeycloakProperties {
     private boolean enabled = false;
 
     /**
-     * 客户端ID
-     */
-    private String clientId;
-
-    /**
-     * 客户端密钥
-     */
-    private String clientSecret;
-
-    /**
-     * Keycloak realm名称
-     */
-    private String realm;
-
-    /**
-     * Keycloak服务器地址
-     * 例如: http://localhost:8080
-     */
-    private String baseUrl;
-
-    /**
-     * 重定向URI
-     * 例如: http://localhost:8888/api/auth/keycloak
-     */
-    private String redirectUri;
-
-    /**
      * 新用户默认角色
      */
     private String defaultRole = "USER";
 
     /**
-     * 获取授权端点URI
+     * 登出端点URI
+     * 例如: http://localhost:8080/realms/selfTest/protocol/openid-connect/logout
      */
-    public String getAuthorizationUri() {
-        return baseUrl + "/realms/" + realm + "/protocol/openid-connect/auth";
-    }
-
-    /**
-     * 获取令牌端点URI
-     */
-    public String getTokenUri() {
-        return baseUrl + "/realms/" + realm + "/protocol/openid-connect/token";
-    }
-
-    /**
-     * 获取用户信息端点URI
-     */
-    public String getUserInfoUri() {
-        return baseUrl + "/realms/" + realm + "/protocol/openid-connect/userinfo";
-    }
-
-    /**
-     * 获取JWK Set URI
-     */
-    public String getJwkSetUri() {
-        return baseUrl + "/realms/" + realm + "/protocol/openid-connect/certs";
-    }
-
-    /**
-     * 获取登出端点URI
-     */
-    public String getLogoutEndpoint() {
-        return baseUrl + "/realms/" + realm + "/protocol/openid-connect/logout";
-    }
+    private String logoutUri;
 }

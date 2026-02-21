@@ -99,7 +99,7 @@ public class CasSecurityConfig implements InitializingBean {
         // 这里使用简单的实现，实际用户同步在 SuccessHandler 中处理
         provider.setAuthenticationUserDetailsService(token -> {
             String username = token.getName();
-            log.debug("CAS AuthenticationUserDetailsService 加载用户: {}", username);
+            log.info("CAS AuthenticationUserDetailsService 加载用户: {}", username);
             // 返回一个临时的 UserDetails，实际的用户同步在 SuccessHandler 中进行
             return new User(username, "", AuthorityUtils.createAuthorityList("ROLE_USER"));
         });
@@ -156,12 +156,11 @@ public class CasSecurityConfig implements InitializingBean {
     @ConditionalOnMissingBean(CasAuthenticationFilter.class)
     public CasAuthenticationFilter casAuthenticationFilter() throws Exception {
         CasAuthenticationFilter filter = new CasAuthenticationFilter();
-        // 设置处理的 URL 路径
-//        filter.setFilterProcessesUrl(ssoProperties.getCas().getLoginPath());
-        // 设置成功/失败处理器
+        // 设置处理的 URL 路径（默认也是 /login/cas）
+        filter.setFilterProcessesUrl(ssoProperties.getCas().getLoginPath());
+        // 设置成功处理器
         filter.setAuthenticationSuccessHandler(casAuthSuccessHandler());
-//        filter.setAuthenticationFailureHandler(casAuthFailHandler());
-        // 注意：AuthenticationManager 需要在 WebSecurityConfig 中设置
+        // 设置认证管理器
         ProviderManager providerManager = new ProviderManager(casAuthenticationProvider());
         filter.setAuthenticationManager(providerManager);
         log.info("初始化CAS认证过滤器(Spring Security原生), 处理路径: {}", ssoProperties.getCas().getLoginPath());

@@ -38,10 +38,10 @@ public class CasProperties {
     private String clientHostUrl;
 
     /**
-     * CAS回调路径
-     * 默认: /api/auth/cas
+     * CAS回调路径（CasAuthenticationFilter 处理的路径）
+     * 默认: /login/cas
      */
-    private String loginPath = "/api/auth/cas";
+    private String loginPath = "/login/cas";
 
     /**
      * 新用户默认角色

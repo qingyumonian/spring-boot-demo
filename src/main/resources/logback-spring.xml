@@ -124,16 +124,18 @@
 
     <!-- 开发环境配置 -->
     <springProfile name="dev">
-        <root level="DEBUG">
+        <root level="INFO">
             <appender-ref ref="CONSOLE"/>
 <!--            <appender-ref ref="DEBUG_FILE"/>-->
             <appender-ref ref="INFO_FILE"/>
-            <appender-ref ref="WARN_FILE"/>
+<!--            <appender-ref ref="WARN_FILE"/>-->
             <appender-ref ref="ERROR_FILE"/>
-            <appender-ref ref="ALL_FILE"/>
+<!--            <appender-ref ref="ALL_FILE"/>-->
         </root>
         <logger name="com.lxf.demo" level="DEBUG"/>
         <logger name="org.springframework" level="INFO"/>
+        <logger name="org.springframework.security.oauth2" level="DEBUG"/>
+        <logger name="org.springframework.security.oauth2.client" level="DEBUG"/>
         <logger name="com.alibaba.druid" level="INFO"/>
     </springProfile>
 

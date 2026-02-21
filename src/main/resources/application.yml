@@ -2,19 +2,34 @@ spring:
   application:
     name: SpringBootDemo
   profiles:
-    active: dev
+    # 可以在本地新建配置文件 application-local.yml，写入自定义配置项覆盖默认配置
+    # application-local.yml 仅在本机有效，不会提交git
+    active: dev,local
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: springboot
+            client-secret: rhP74DrlG3IZpW6GmoFNEyUmlAcnD0y3
+            scope: openid,profile,email
+            authorization-grant-type: authorization_code
+            redirect-uri: http://localhost:8888/login/oauth2/code/keycloak
+        provider:
+          keycloak:
+            authorization-uri: http://localhost:8080/realms/selfTest/protocol/openid-connect/auth
+            token-uri: http://localhost:8080/realms/selfTest/protocol/openid-connect/token
+            user-info-uri: http://localhost:8080/realms/selfTest/protocol/openid-connect/userinfo
+            jwk-set-uri: http://localhost:8080/realms/selfTest/protocol/openid-connect/certs
+            user-name-attribute: preferred_username
 
-# SSO配置 - 统一管理CAS和OIDC认证
+# SSO配置 - 额外的SSO选项
 sso:
-  # Keycloak OIDC配置
+  # Keycloak OIDC配置（enabled控制是否启用，其他配置由spring.security.oauth2.client管理）
   keycloak:
     enabled: true
-    client-id: springboot
-    client-secret: rhP74DrlG3IZpW6GmoFNEyUmlAcnD0y3
-    realm: selfTest
-    base-url: http://localhost:8080
-    redirect-uri: http://localhost:8888/api/auth/sso/keycloak/callback
     default-role: USER
+    logout-uri: http://localhost:8080/realms/selfTest/protocol/openid-connect/logout
   # CAS 2.0配置
   cas:
     enabled: true

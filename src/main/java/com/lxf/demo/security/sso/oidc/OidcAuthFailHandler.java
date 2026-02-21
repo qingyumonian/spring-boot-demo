@@ -1,4 +1,4 @@
-package com.lxf.demo.security.handler;
+package com.lxf.demo.security.sso.oidc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lxf.demo.common.result.R;
