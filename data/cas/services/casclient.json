@@ -1,0 +1,8 @@
+{
+  "@class": "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId": "^(http|https|imaps)://.*",
+  "name": "casclient",
+  "id": 10000,
+  "description": "cas client based on spring security",
+  "evaluationOrder": 10000
+}

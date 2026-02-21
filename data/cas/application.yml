@@ -1,0 +1,33 @@
+# Application properties that need to be
+# embedded within the web application can be included here
+
+server:
+  port: 8444
+  ssl:
+    enabled: true
+    key-store: file:D:/docker/cas/etc/cas/thekeystore.p12
+    key-store-password: changeit
+    key-store-type: PKCS12
+    key-alias: cas
+
+cas:
+  authn:
+    jdbc:
+      query:
+        - url: jdbc:mysql://localhost:3306/lxf-demo?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&characterEncoding=utf8
+          user: root
+          password: Theking1217.
+          driver-class: com.mysql.cj.jdbc.Driver
+          sql: SELECT username, password, email FROM sys_user WHERE username=? AND status=1
+          field-password: password
+          principal-attribute-list:
+            - email
+          password-encoder:
+            type: DEFAULT
+            encoding-algorithm: MD5
+            character-encoding: UTF-8
+  service-registry:
+    core:
+      init-from-json: true
+    json:
+      location: classpath:/services
