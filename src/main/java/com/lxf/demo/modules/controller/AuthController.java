@@ -5,6 +5,7 @@ import com.lxf.demo.modules.service.ITokenService;
 import com.lxf.demo.utils.JwtTokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -31,6 +32,14 @@ public class AuthController {
 
     @Resource
     private ITokenService tokenService;
+
+    /**
+     * 健康检查端点 - Docker 健康检查使用
+     */
+    @GetMapping("/health")
+    public R<String> health() {
+        return R.ok("UP");
+    }
 
     @PostMapping("/logout")
     public R<Void> logout(HttpServletRequest request, HttpServletResponse response) {

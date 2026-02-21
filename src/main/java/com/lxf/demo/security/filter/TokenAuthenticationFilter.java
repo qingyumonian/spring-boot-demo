@@ -48,7 +48,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                     SecurityContextHolder.setContext(context);
 //                    SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
-                System.out.println("Is user authenticated? " + authentication.isAuthenticated());
+                log.info("Is user authenticated? " + authentication.isAuthenticated());
             }
         } catch (AuthenticationException failed) {
             SecurityContextHolder.clearContext();

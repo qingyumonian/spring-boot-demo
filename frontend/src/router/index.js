@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
-import { getToken } from '@/utils/auth'
+import { getToken, setToken } from '@/utils/auth'
 import { useUserStore } from '@/store/user'
 
 NProgress.configure({ showSpinner: false })
@@ -62,6 +62,31 @@ const whiteList = ['/login']
 router.beforeEach(async (to, from, next) => {
   NProgress.start()
   document.title = to.meta.title ? `${to.meta.title} - Admin Panel` : 'Admin Panel'
+
+  // 处理SSO回调后URL中的token参数
+  const urlToken = to.query.token
+  if (urlToken) {
+    setToken(urlToken)
+    // 更新 store 中的 token
+    const userStore = useUserStore()
+    userStore.token = urlToken
+    // 移除URL中的token参数，保持URL干净
+    const query = { ...to.query }
+    delete query.token
+    delete query.error
+    delete query.error_description
+    next({ path: to.path, query, replace: true })
+    NProgress.done()
+    return
+  }
+
+  // 处理SSO错误
+  if (to.query.error) {
+    console.error('SSO Error:', to.query.error, to.query.error_description)
+    next({ path: '/login', replace: true })
+    NProgress.done()
+    return
+  }
 
   const hasToken = getToken()
 

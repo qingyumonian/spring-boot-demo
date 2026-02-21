@@ -8,14 +8,18 @@ import com.lxf.demo.security.sso.cas.CasAuthSuccessHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.jasig.cas.client.validation.Cas30ServiceTicketValidator;
 import org.jasig.cas.client.validation.TicketValidator;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.cas.ServiceProperties;
 import org.springframework.security.cas.authentication.CasAuthenticationProvider;
 import org.springframework.security.cas.web.CasAuthenticationEntryPoint;
 import org.springframework.security.cas.web.CasAuthenticationFilter;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
 
@@ -29,7 +33,7 @@ import javax.annotation.Resource;
 @Slf4j
 @Configuration
 @ConditionalOnProperty(prefix = "sso.cas", name = "enabled", havingValue = "true")
-public class CasSecurityConfig {
+public class CasSecurityConfig implements InitializingBean {
 
     @Resource
     private SsoProperties ssoProperties;
@@ -46,15 +50,18 @@ public class CasSecurityConfig {
     @Value("${auth.frontend-url:http://localhost:3000}")
     private String frontendUrl;
 
+    @Resource
+    private HttpSecurity httpSecurity;
+
     /**
      * CAS 服务属性配置
      * 定义本应用的 service URL（CAS 回调地址）
      */
     @Bean
+    @ConditionalOnMissingBean
     public ServiceProperties serviceProperties() {
         ServiceProperties properties = new ServiceProperties();
         properties.setService(ssoProperties.getCas().getServiceUrl());
-        properties.setSendRenew(false);
         log.info("初始化CAS ServiceProperties, service={}", properties.getService());
         return properties;
     }
@@ -64,6 +71,7 @@ public class CasSecurityConfig {
      * 使用 CAS 3.0 协议验证器（兼容 CAS 2.0）
      */
     @Bean
+    @ConditionalOnMissingBean
     public TicketValidator cas30ServiceTicketValidator() {
         log.info("初始化CAS票据验证器, casServerUrlPrefix={}", ssoProperties.getCas().getServerUrlPrefix());
         return new Cas30ServiceTicketValidator(ssoProperties.getCas().getServerUrlPrefix());
@@ -74,6 +82,7 @@ public class CasSecurityConfig {
      * 负责验证 CAS 票据并创建 Authentication 对象
      */
     @Bean
+    @ConditionalOnMissingBean
     public CasAuthenticationProvider casAuthenticationProvider() {
         CasAuthenticationProvider provider = new CasAuthenticationProvider();
 
@@ -84,7 +93,7 @@ public class CasSecurityConfig {
         provider.setServiceProperties(serviceProperties());
 
         // 设置唯一 key
-        provider.setKey("CAS_PROVIDER_LOCALHOST_8888");
+        provider.setKey("changeit");
 
         // 设置 AuthenticationUserDetailsService
         // 这里使用简单的实现，实际用户同步在 SuccessHandler 中处理
@@ -104,6 +113,7 @@ public class CasSecurityConfig {
      * 当用户未认证时，重定向到 CAS 登录页
      */
     @Bean
+    @ConditionalOnMissingBean
     public CasAuthenticationEntryPoint casAuthenticationEntryPoint() {
         CasAuthenticationEntryPoint entryPoint = new CasAuthenticationEntryPoint();
         entryPoint.setLoginUrl(ssoProperties.getCas().getServerLoginUrl());
@@ -116,6 +126,7 @@ public class CasSecurityConfig {
      * CAS 认证成功处理器
      */
     @Bean
+    @ConditionalOnMissingBean
     public CasAuthSuccessHandler casAuthSuccessHandler() {
         log.info("初始化CAS认证成功处理器");
         return new CasAuthSuccessHandler(
@@ -130,27 +141,35 @@ public class CasSecurityConfig {
     /**
      * CAS 认证失败处理器
      */
-    @Bean
-    public CasAuthFailHandler casAuthFailHandler() {
-        log.info("初始化CAS认证失败处理器");
-        return new CasAuthFailHandler();
-    }
+//    @Bean
+//    @ConditionalOnMissingBean
+//    public CasAuthFailHandler casAuthFailHandler() {
+//        log.info("初始化CAS认证失败处理器");
+//        return new CasAuthFailHandler();
+//    }
 
     /**
      * CAS 认证过滤器（Spring Security 原生）
      * 拦截 CAS 回调请求，验证票据
      */
     @Bean
+    @ConditionalOnMissingBean(CasAuthenticationFilter.class)
     public CasAuthenticationFilter casAuthenticationFilter() throws Exception {
         CasAuthenticationFilter filter = new CasAuthenticationFilter();
         // 设置处理的 URL 路径
-        filter.setFilterProcessesUrl(ssoProperties.getCas().getLoginPath());
+//        filter.setFilterProcessesUrl(ssoProperties.getCas().getLoginPath());
         // 设置成功/失败处理器
         filter.setAuthenticationSuccessHandler(casAuthSuccessHandler());
-        filter.setAuthenticationFailureHandler(casAuthFailHandler());
+//        filter.setAuthenticationFailureHandler(casAuthFailHandler());
         // 注意：AuthenticationManager 需要在 WebSecurityConfig 中设置
-
+        ProviderManager providerManager = new ProviderManager(casAuthenticationProvider());
+        filter.setAuthenticationManager(providerManager);
         log.info("初始化CAS认证过滤器(Spring Security原生), 处理路径: {}", ssoProperties.getCas().getLoginPath());
         return filter;
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        httpSecurity.addFilter(casAuthenticationFilter());
     }
 }

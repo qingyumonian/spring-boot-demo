@@ -3,9 +3,9 @@ spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/lxf-demo-prod?useSSL=true&serverTimezone=UTC&allowPublicKeyRetrieval=true&characterEncoding=utf8mb4
-    username: root
-    password: root
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3306/lxf-demo-prod?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&characterEncoding=utf8mb4}
+    username: ${SPRING_DATASOURCE_USERNAME:root}
+    password: ${SPRING_DATASOURCE_PASSWORD:root}
     druid:
       initial-size: 10
       min-idle: 10
@@ -20,7 +20,33 @@ spring:
       pool-prepared-statements: true
       max-pool-prepared-statement-per-connection-size: 20
 
+  # Redis 配置
+  redis:
+    host: ${SPRING_REDIS_HOST:localhost}
+    port: ${SPRING_REDIS_PORT:6379}
+    password: ${SPRING_REDIS_PASSWORD:}
+    timeout: 10000ms
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        min-idle: 0
+        max-wait: -1ms
+
 mybatis-plus:
   type-aliases-package: com.lxf.demo.modules.*.entity
   configuration:
     map-underscore-to-camel-case: true
+
+# SSO 配置覆盖 (生产环境)
+sso:
+  keycloak:
+    enabled: ${SSO_KEYCLOAK_ENABLED:false}
+    base-url: ${SSO_KEYCLOAK_BASE_URL:}
+    realm: ${SSO_KEYCLOAK_REALM:}
+    client-id: ${SSO_KEYCLOAK_CLIENT_ID:}
+    client-secret: ${SSO_KEYCLOAK_CLIENT_SECRET:}
+  cas:
+    enabled: ${SSO_CAS_ENABLED:false}
+    server-url-prefix: ${SSO_CAS_SERVER_URL_PREFIX:}
+    client-host-url: ${SSO_CAS_CLIENT_HOST_URL:}

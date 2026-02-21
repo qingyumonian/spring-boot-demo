@@ -56,9 +56,10 @@
           type="default"
           size="large"
           class="keycloak-button"
+          :loading="ssoLoading"
           @click="handleKeycloakLogin"
         >
-          <svg class="keycloak-icon" viewBox="0 0 24 24" width="20" height="20">
+          <svg v-if="!ssoLoading" class="keycloak-icon" viewBox="0 0 24 24" width="20" height="20">
             <path fill="currentColor" d="M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.18l6.9 3.45L12 11.09 5.1 7.63 12 4.18zM4 8.81l7 3.5v6.88l-7-3.5V8.81zm9 10.38v-6.88l7-3.5v6.88l-7 3.5z"/>
           </svg>
           <span>Keycloak SSO</span>
@@ -68,9 +69,10 @@
           type="default"
           size="large"
           class="cas-button"
+          :loading="ssoLoading"
           @click="handleCasLogin"
         >
-          <svg class="cas-icon" viewBox="0 0 24 24" width="20" height="20">
+          <svg v-if="!ssoLoading" class="cas-icon" viewBox="0 0 24 24" width="20" height="20">
             <path fill="currentColor" d="M12 2l9 4.5v11L12 22l-9-4.5v-11L12 2zm0 2.18L6 6.09v7.82l6 3.91 6-3.91V6.09L12 4.18zm-1 3.32h2v6h-2v-6zm0 7h2v2h-2v-2z"/>
           </svg>
           <span>CAS SSO</span>
@@ -94,6 +96,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { User, Lock } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/store/user'
+import { getSsoLoginUrl } from '@/api/auth'
 
 const router = useRouter()
 const route = useRoute()
@@ -101,6 +104,7 @@ const userStore = useUserStore()
 
 const loginFormRef = ref(null)
 const loading = ref(false)
+const ssoLoading = ref(false)
 
 const loginForm = reactive({
   username: 'admin',
@@ -142,19 +146,43 @@ const handleLogin = async () => {
   })
 }
 
+/**
+ * 通用SSO登录处理
+ * @param {string} provider - SSO提供商名称
+ */
+const handleSsoLogin = async (provider) => {
+  if (ssoLoading.value) return
+
+  ssoLoading.value = true
+  try {
+    // 获取登录成功后的重定向URL，默认跳转到dashboard
+    const redirectUri = route.query.redirect || '/dashboard'
+    const currentOrigin = window.location.origin
+    const fullRedirectUri = `${currentOrigin}${redirectUri}`
+
+    // 从后端获取SSO登录URL
+    const res = await getSsoLoginUrl(provider, fullRedirectUri)
+
+    if (res.code === 200 && res.data?.loginUrl) {
+      // 跳转到SSO登录页面
+      window.location.href = res.data.loginUrl
+    } else {
+      ElMessage.error(res.message || `Failed to get ${provider} login URL`)
+    }
+  } catch (error) {
+    console.error(`${provider} login failed:`, error)
+    ElMessage.error(`${provider} login failed`)
+  } finally {
+    ssoLoading.value = false
+  }
+}
+
 const handleKeycloakLogin = () => {
-  // Redirect to Keycloak OAuth2 authorization endpoint
-  const baseUrl = getBaseUrl()
-  window.location.href = `${baseUrl}/oauth2/authorization/keycloak`
+  handleSsoLogin('keycloak')
 }
 
 const handleCasLogin = () => {
-  const baseUrl = getBaseUrl()
-  window.location.href = `${baseUrl}/login/cas`
-}
-
-const getBaseUrl = () => {
-  return import.meta.env.VITE_API_BASE_URL || 'http://localhost:8888'
+  handleSsoLogin('cas')
 }
 </script>
 

@@ -2,10 +2,9 @@ package com.lxf.demo.config;
 
 import com.lxf.demo.config.sso.SsoProperties;
 import com.lxf.demo.security.encoder.Md5PasswordEncoder;
-import com.lxf.demo.security.handler.FormAuthFailHandler;
-import com.lxf.demo.security.handler.FormAuthSuccessHandler;
-import com.lxf.demo.security.handler.JsonAuthenticationEntryPoint;
+import com.lxf.demo.security.handler.*;
 import com.lxf.demo.security.filter.TokenAuthenticationFilter;
+import com.lxf.demo.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -50,34 +49,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private Md5PasswordEncoder md5PasswordEncoder;
 
     @Resource
-    private com.lxf.demo.security.handler.OidcAuthSuccessHandler oidcAuthSuccessHandler;
+    private OidcAuthSuccessHandler oidcAuthSuccessHandler;
 
     @Resource
-    private com.lxf.demo.security.handler.OidcAuthFailHandler oidcAuthFailHandler;
+    private OidcAuthFailHandler oidcAuthFailHandler;
 
     @Resource
-    private com.lxf.demo.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
+    private HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
 
     @Resource
     private SsoProperties ssoProperties;
-
-    /**
-     * CAS认证过滤器（Spring Security 原生）- 仅当 sso.cas.enabled=true 时注入
-     */
-    @Autowired(required = false)
-    private CasAuthenticationFilter casAuthenticationFilter;
-
-    /**
-     * CAS认证提供者 - 仅当 sso.cas.enabled=true 时注入
-     */
-    @Autowired(required = false)
-    private CasAuthenticationProvider casAuthenticationProvider;
-
-    /**
-     * CAS认证入口点 - 仅当 sso.cas.enabled=true 时注入
-     */
-    @Autowired(required = false)
-    private CasAuthenticationEntryPoint casAuthenticationEntryPoint;
 
     @Bean
     @Override
@@ -85,25 +66,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
-    /**
-     * 初始化后设置 CasAuthenticationFilter 的 AuthenticationManager
-     */
-    @PostConstruct
-    public void init() throws Exception {
-        if (casAuthenticationFilter != null) {
-            casAuthenticationFilter.setAuthenticationManager(authenticationManagerBean());
-        }
+    @Bean
+    public HttpSecurity httpSecurity() throws Exception {
+        return super.getHttp();
     }
+
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         // 设置用户密码规则，设置获取用户信息类
         auth.userDetailsService(userDetailsService).passwordEncoder(md5PasswordEncoder);
-
-        // 添加 CAS 认证提供者（如果启用）
-        if (casAuthenticationProvider != null) {
-            auth.authenticationProvider(casAuthenticationProvider);
-        }
     }
 
     /**
@@ -131,6 +103,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/oauth2/**", "/login/oauth2/**","/login/**","/cas/**").permitAll()
+                .antMatchers("/api/auth/sso/**","/login/cas").permitAll()  // 统一SSO端点
                 .antMatchers( "/api/auth/logout/**","/api/auth/**").permitAll()    //允许部分接口可以直接放回
                 .anyRequest().authenticated()
                 //基础的表单登陆
@@ -156,12 +129,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         // 添加 Token 认证过滤器
         http.addFilterAfter(tokenAuthenticationFilter, SecurityContextPersistenceFilter.class);
-
-        // CAS 过滤器配置（Spring Security 原生）- 仅当 CAS 启用时添加
-        if (casAuthenticationFilter != null) {
-            http.addFilterAfter(casAuthenticationFilter, TokenAuthenticationFilter.class);
-        }
-
         http.headers().frameOptions().disable();
     }
 

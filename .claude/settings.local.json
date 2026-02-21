@@ -25,7 +25,12 @@
       "Bash(mvnw.cmd compile:*)",
       "Bash(powershell -Command \".\\\\mvnw.cmd compile -q\")",
       "Bash(cmd /c \"mvnw.cmd compile -q\")",
-      "Bash(./mvnw.cmd clean compile:*)"
+      "Bash(./mvnw.cmd clean compile:*)",
+      "Bash(echo:*)",
+      "Bash(java:*)",
+      "Bash(./mvnw.cmd compile:*)",
+      "Bash(curl:*)",
+      "Bash(taskkill:*)"
     ]
   }
 }
