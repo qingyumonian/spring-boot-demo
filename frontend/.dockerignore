@@ -1,0 +1,37 @@
+# ==================== 前端 .dockerignore ====================
+
+# 依赖
+node_modules/
+
+# 构建输出
+dist/
+
+# IDE
+.idea/
+.vscode/
+*.code-workspace
+
+# Git
+.git/
+.gitignore
+
+# 日志
+*.log
+npm-debug.log*
+
+# 环境配置
+.env.local
+.env.*.local
+
+# 测试
+coverage/
+*.spec.js
+*.test.js
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+Dockerfile
+.dockerignore
