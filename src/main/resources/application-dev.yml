@@ -32,6 +32,14 @@ mybatis-plus:
     map-underscore-to-camel-case: true
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
+# Flowable工作流配置
+flowable:
+  database-schema-update: true
+  async-executor-activate: false
+  history-level: full
+  idm:
+    enabled: false
+
 # Auth Configuration
 auth:
   token-timeout: 36000

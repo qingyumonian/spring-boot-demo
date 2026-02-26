@@ -18,10 +18,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -76,7 +74,8 @@ public class SsoController {
         if (!ssoProvider.isEnabled()) {
             return R.fail("SSO提供商未启用: " + provider);
         }
-
+        StringBuilder stringBuilder = new StringBuilder();
+        StringBuffer stringBuffer = new StringBuffer();
         // 生成state参数（如果未提供）
         String actualState = StringUtils.hasText(state) ? state : UUID.randomUUID().toString();
 

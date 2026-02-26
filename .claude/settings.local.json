@@ -30,7 +30,15 @@
       "Bash(java:*)",
       "Bash(./mvnw.cmd compile:*)",
       "Bash(curl:*)",
-      "Bash(taskkill:*)"
+      "Bash(taskkill:*)",
+      "Bash(git checkout:feature-integrate-signoz)",
+      "Bash(head:100)",
+      "Bash(tail:*)",
+      "Bash(grep:)",
+      "Bash(head:*)",
+      "Bash(true:*)",
+      "WebSearch",
+      "WebFetch(domain:signoz.io)"
     ]
   }
 }

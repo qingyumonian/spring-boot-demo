@@ -9,8 +9,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@bpmn-io/properties-panel": "^3.18.2",
     "@element-plus/icons-vue": "^2.3.2",
     "axios": "^1.13.5",
+    "bpmn-js": "^17.2.1",
+    "bpmn-js-properties-panel": "^5.8.0",
     "element-plus": "^2.13.2",
     "js-cookie": "^3.0.5",
     "nprogress": "^0.2.0",

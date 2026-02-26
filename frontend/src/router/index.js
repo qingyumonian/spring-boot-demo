@@ -42,6 +42,56 @@ const routes = [
         name: 'Menu',
         component: () => import('@/views/system/menu/index.vue'),
         meta: { title: 'Menu Management', icon: 'Menu' }
+      },
+      // Workflow routes
+      {
+        path: 'workflow/definition',
+        name: 'ProcessDefinition',
+        component: () => import('@/views/workflow/definition/index.vue'),
+        meta: { title: 'Process Definition', icon: 'Document' }
+      },
+      {
+        path: 'workflow/definition/designer',
+        name: 'ProcessDesigner',
+        component: () => import('@/views/workflow/definition/designer.vue'),
+        meta: { title: 'Process Designer', hidden: true }
+      },
+      {
+        path: 'workflow/instance',
+        name: 'ProcessInstance',
+        component: () => import('@/views/workflow/instance/index.vue'),
+        meta: { title: 'My Processes', icon: 'List' }
+      },
+      {
+        path: 'workflow/task/todo',
+        name: 'TodoTask',
+        component: () => import('@/views/workflow/task/todo.vue'),
+        meta: { title: 'Todo Tasks', icon: 'Clock' }
+      },
+      {
+        path: 'workflow/task/done',
+        name: 'DoneTask',
+        component: () => import('@/views/workflow/task/done.vue'),
+        meta: { title: 'Done Tasks', icon: 'CircleCheck' }
+      },
+      // Expense routes
+      {
+        path: 'expense/list',
+        name: 'ExpenseList',
+        component: () => import('@/views/expense/index.vue'),
+        meta: { title: 'My Expenses', icon: 'Tickets' }
+      },
+      {
+        path: 'expense/apply',
+        name: 'ExpenseApply',
+        component: () => import('@/views/expense/apply.vue'),
+        meta: { title: 'Apply Expense', icon: 'EditPen' }
+      },
+      {
+        path: 'expense/detail/:id',
+        name: 'ExpenseDetail',
+        component: () => import('@/views/expense/detail.vue'),
+        meta: { title: 'Expense Detail', hidden: true }
       }
     ]
   },
