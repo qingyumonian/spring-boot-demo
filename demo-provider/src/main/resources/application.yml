@@ -1,6 +1,18 @@
 spring:
   application:
-    name: SpringBootDemo
+    name: demo-provider
+
+# Dubbo configuration
+dubbo:
+  application:
+    name: demo-provider
+  registry:
+    address: nacos://${NACOS_SERVER:localhost:8848}
+  protocol:
+    name: dubbo
+    port: ${DUBBO_PORT:20880}
+  scan:
+    base-packages: com.lxf.demo.dubbo
   profiles:
     # 可以在本地新建配置文件 application-local.yml，写入自定义配置项覆盖默认配置
     # application-local.yml 仅在本机有效，不会提交git

@@ -1,0 +1,16 @@
+server:
+  port: ${SERVER_PORT:8889}
+
+spring:
+  application:
+    name: demo-consumer
+
+# Dubbo configuration
+dubbo:
+  application:
+    name: demo-consumer
+  registry:
+    address: nacos://${NACOS_SERVER:localhost:8848}
+  consumer:
+    check: false
+    timeout: 30000

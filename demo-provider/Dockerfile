@@ -1,4 +1,4 @@
-# ==================== 后端 Dockerfile ====================
+# ==================== Provider Dockerfile ====================
 # 多阶段构建：构建阶段 + 运行阶段
 
 # ========== 构建阶段 ==========
@@ -6,13 +6,18 @@ FROM maven:3.8-openjdk-8 AS builder
 
 WORKDIR /app
 
-# 先复制 pom.xml 利用 Docker 缓存
+# 先复制父 pom.xml 和子模块 pom.xml 利用 Docker 缓存
 COPY pom.xml .
-RUN mvn dependency:go-offline -B
+COPY demo-api/pom.xml demo-api/
+COPY demo-provider/pom.xml demo-provider/
+
+# 下载依赖
+RUN mvn dependency:go-offline -B -pl demo-provider -am
 
 # 复制源代码并构建
-COPY src ./src
-RUN mvn clean package -DskipTests -B
+COPY demo-api/src demo-api/src
+COPY demo-provider/src demo-provider/src
+RUN mvn clean package -DskipTests -B -pl demo-provider -am
 
 # ========== 运行阶段 ==========
 FROM openjdk:8-jre-slim
@@ -28,7 +33,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY opentelemetry-javaagent.jar /app/opentelemetry-javaagent.jar
 
 # 从构建阶段复制 JAR
-COPY --from=builder /app/target/*.jar app.jar
+COPY --from=builder /app/demo-provider/target/*.jar app.jar
 
 # 创建非 root 用户运行应用
 RUN groupadd -r spring && useradd -r -g spring spring
@@ -39,14 +44,14 @@ USER spring:spring
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
     CMD curl -f http://localhost:8888/api/auth/health || exit 1
 
-# 暴露端口
-EXPOSE 8888
+# 暴露端口 (HTTP + Dubbo)
+EXPOSE 8888 20880
 
 # JVM 优化参数
 ENV JAVA_OPTS="-Xms256m -Xmx512m -XX:+UseG1GC -XX:+HeapDumpOnOutOfMemoryError"
 
 # OpenTelemetry 配置 (可通过环境变量覆盖)
-ENV OTEL_SERVICE_NAME="SpringBootDemo"
+ENV OTEL_SERVICE_NAME="demo-provider"
 ENV OTEL_EXPORTER_OTLP_ENDPOINT="http://localhost:4318"
 ENV OTEL_TRACES_EXPORTER="otlp"
 ENV OTEL_METRICS_EXPORTER="otlp"
