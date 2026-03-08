@@ -1,5 +1,6 @@
 package com.lxf.demo.modules.service.impl;
 
+import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -41,6 +42,7 @@ public class MenuServiceImpl implements IMenuService {
         return menu;
     }
 
+    @DS("")
     @Override
     public SysMenu getMenuById(Long id) {
         return menuMapper.selectById(id);
